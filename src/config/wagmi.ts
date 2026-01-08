@@ -8,7 +8,6 @@ import {
   rainbowWallet,
   safeWallet,
   trustWallet,
-  coinbaseWallet,
   walletConnectWallet,
   injectedWallet,
 } from '@rainbow-me/rainbowkit/wallets';
@@ -27,11 +26,11 @@ const connectors = connectorsForWallets(
 
     {
       groupName: 'Popular wallets',
-      wallets: [injectedWallet, rainbowWallet, oneInchWallet, ledgerWallet, trustWallet, coinbaseWallet, safeWallet],
+      wallets: [injectedWallet, rainbowWallet, oneInchWallet, ledgerWallet, trustWallet, safeWallet],
     },
   ],
   {
-    appName: 'Liquorice',
+    appName: '0xSum',
     projectId: walletConnectProjectId,
   },
 );
@@ -45,8 +44,8 @@ const wagmiConfig = {
 export const config = getDefaultConfig({
   ...wagmiConfig,
   projectId: walletConnectProjectId,
-  appName: 'Balance',
+  appName: '0xSum',
   appDescription: '',
-  appUrl: 'https://balance.tech',
-  appIcon: 'https://app.balance.tech/images/logo-mini.svg',
+  appUrl: 'https://0xSum.io',
+  appIcon: 'https://app.0xSum.io/images/logo-mini.svg',
 });

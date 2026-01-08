@@ -15,7 +15,7 @@ type WagmiProviderProps = {
   children: ReactNode;
 };
 
-const appInfo = { appName: 'Balance' };
+const appInfo = { appName: '0xSum' };
 
 export const Web3Provider: FC<WagmiProviderProps> = ({ children }) => {
   const queryClient = getQueryClient();
