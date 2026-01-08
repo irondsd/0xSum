@@ -5,7 +5,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import type { FC, ReactNode } from 'react';
 
-import { type State, WagmiProvider } from 'wagmi';
+import { WagmiProvider } from 'wagmi';
 
 
 import { getQueryClient } from '@/utils/getQueryClient';
@@ -13,17 +13,16 @@ import { config } from '@/config/wagmi';
 
 type WagmiProviderProps = {
   children: ReactNode;
-  initialState: State | undefined;
 };
 
 const appInfo = { appName: 'Liquorice' };
 
-export const Web3Provider: FC<WagmiProviderProps> = ({ children, initialState }) => {
+export const Web3Provider: FC<WagmiProviderProps> = ({ children }) => {
   const queryClient = getQueryClient();
 
 
   return (
-    <WagmiProvider config={config} initialState={initialState}>
+    <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider  appInfo={appInfo}>
           {children}
