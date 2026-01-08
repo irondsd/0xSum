@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import { Web3Provider } from '@/components/providers/Web3Provider'
+import { Web3Provider } from '@/providers/Web3Provider'
 import './globals.scss'
 import s from './layout.module.scss'
 
