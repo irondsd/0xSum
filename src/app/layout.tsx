@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { Web3Provider } from '@/providers/Web3Provider'
-import './globals.scss'
+import './globals.css'
 import s from './layout.module.scss'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' })

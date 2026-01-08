@@ -15,7 +15,7 @@ type WagmiProviderProps = {
   children: ReactNode;
 };
 
-const appInfo = { appName: 'Liquorice' };
+const appInfo = { appName: 'Balance' };
 
 export const Web3Provider: FC<WagmiProviderProps> = ({ children }) => {
   const queryClient = getQueryClient();
