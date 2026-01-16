@@ -43,7 +43,7 @@ export function TokenBreakdown({ balances, isLoading }: TokenBreakdownProps) {
         return (
           <div key={balance.symbol} className={s.tokenItem}>
             <div className={s.tokenIcon}>
-              {displaySymbol.slice(0, 2)}
+              {displaySymbol}
             </div>
             <div className={s.tokenDetails}>
               <div className={s.tokenHeader}>
