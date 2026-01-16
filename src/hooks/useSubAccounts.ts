@@ -15,31 +15,28 @@ export function useSubAccounts(mainAddress: Address | undefined) {
 
   // Load sub-accounts from localStorage when mainAddress changes
   useEffect(() => {
-    if (!mainAddress) {
-      setSubAccounts([]);
-      setIsLoaded(true);
-      return;
-    }
+    let accounts: Address[] = [];
 
-    try {
-      const storageKey = `${STORAGE_KEY_PREFIX}${mainAddress.toLowerCase()}`;
-      const stored = localStorage.getItem(storageKey);
+    if (mainAddress) {
+      try {
+        const storageKey = `${STORAGE_KEY_PREFIX}${mainAddress.toLowerCase()}`;
+        const stored = localStorage.getItem(storageKey);
 
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) {
-          const validAddresses = parsed.filter(
-            (addr): addr is Address => typeof addr === 'string' && isAddress(addr)
-          );
-          setSubAccounts(validAddresses);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed)) {
+            accounts = parsed.filter(
+              (addr): addr is Address => typeof addr === 'string' && isAddress(addr)
+            );
+          }
         }
-      } else {
-        setSubAccounts([]);
+      } catch (error) {
+        console.error('Failed to load sub-accounts from localStorage:', error);
       }
-    } catch (error) {
-      console.error('Failed to load sub-accounts from localStorage:', error);
-      setSubAccounts([]);
     }
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setSubAccounts(accounts);
     setIsLoaded(true);
   }, [mainAddress]);
 

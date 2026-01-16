@@ -21,10 +21,9 @@ export const USDT_ADDRESSES: Record<number, Address> = {
 // Combined token addresses per chain
 // Format: { chainId: [address1, address2, ...] }
 export const TOKEN_ADDRESSES: Record<number, Address[]> = {
-  1: [USDC_ADDRESSES[1], USDT_ADDRESSES[1]],
+  1: [USDC_ADDRESSES[1], USDT_ADDRESSES[1], '0xae7ab96520de3a18e5e111b5eaab095312d7fe84'],
   42161: [USDC_ADDRESSES[42161], USDT_ADDRESSES[42161]],
   8453: [USDC_ADDRESSES[8453], USDT_ADDRESSES[8453]],
-  11155111: [], // Sepolia - no stablecoins
 };
 
 // Symbol to full name mapping
@@ -32,12 +31,23 @@ export const TOKEN_NAMES: Record<string, string> = {
   ETH: 'Ethereum',
   USDC: 'USD Coin',
   USDT: 'Tether USD',
-  WETH: 'Wrapped Ether',
+  WETH: 'Wrapped Ethereum',
+  stETH: 'Staked Ethereum',
+  wstETH: 'Wrapped Staked Ethereum',
 };
+
+export const formatTokenSymbol: Record<string, string> = {
+  eth: 'ETH',
+  usdc: 'USDC',
+  usdt: 'USDT',
+  weth: 'WETH',
+  steth: 'stETH',
+  wsteth: 'wstETH',
+}
 
 // Helper to get token name from symbol
 export const getTokenName = (symbol: string): string => {
-  return TOKEN_NAMES[symbol] || symbol;
+  return TOKEN_NAMES[symbol] || TOKEN_NAMES[symbol.toUpperCase()] || symbol;
 };
 
 // ERC20 ABI for reading token info

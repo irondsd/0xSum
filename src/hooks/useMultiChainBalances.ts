@@ -2,9 +2,13 @@
 
 import { useMemo } from 'react';
 import { type Address } from 'viem';
-import { useBalance, useReadContracts } from 'wagmi';
+import { useQuery, useQueries } from '@tanstack/react-query';
+import { getBalance } from 'wagmi/actions';
+import { useReadContracts, useConfig } from 'wagmi';
 import { supportedChains, NATIVE_TOKENS } from '@/config/chains';
-import { TOKEN_ADDRESSES, ERC20_ABI, getTokenName } from '@/config/tokens';
+import { TOKEN_ADDRESSES, ERC20_ABI, getTokenName, TOKEN_NAMES } from '@/config/tokens';
+import { useNativeBalances } from './useNativeBalances';
+import { normalizeTokenSymbol } from '@/utils/normalizeTokenSymbol';
 
 export interface TokenBalance {
   symbol: string;
@@ -13,7 +17,7 @@ export interface TokenBalance {
   chainId: number;
   address: Address | null; // null for native token
   balance: bigint;
-  usdValue: number; // 1:1 for MVP
+  usdValue: number;
 }
 
 export interface AccountBalances {
@@ -24,16 +28,27 @@ export interface AccountBalances {
   isError: boolean;
 }
 
+const fetchTokenPrices = async (symbols: string[]) => {
+  if (!symbols.length) return {};
+  const query = symbols.join(',');
+  const res = await fetch(`/api/tokenPrices?symbols=${query}`);
+  if (!res.ok) throw new Error('Failed to fetch prices');
+  return res.json() as Promise<Record<string, number>>;
+};
+
+export function useTokenPrices(symbols: string[] = Object.keys(TOKEN_NAMES)) {
+  return useQuery({
+    queryKey: ['tokenPrices', symbols],
+    queryFn: () => fetchTokenPrices(symbols),
+    // Refresh every minute
+    refetchInterval: 60000,
+  });
+}
+
 /**
  * Hook to fetch balances for a single address across all supported chains
  */
 export function useAccountBalances(address: Address | undefined): AccountBalances | null {
-  // Fetch native balances for all chains
-  const nativeBalanceQueries = supportedChains.map((chain) => ({
-    address,
-    chainId: chain.id,
-  }));
-
   // Build ERC20 balance queries for all tokens on all chains
   const erc20Queries = useMemo(() => {
     if (!address) return [];
@@ -78,17 +93,7 @@ export function useAccountBalances(address: Address | undefined): AccountBalance
   }, [address]);
 
   // Native token balances - one hook per chain
-  const nativeBalance1 = useBalance({ address, chainId: 1 });
-  const nativeBalance42161 = useBalance({ address, chainId: 42161 });
-  const nativeBalance8453 = useBalance({ address, chainId: 8453 });
-  const nativeBalance11155111 = useBalance({ address, chainId: 11155111 });
-
-  const nativeBalances = useMemo(() => ({
-    1: nativeBalance1,
-    42161: nativeBalance42161,
-    8453: nativeBalance8453,
-    11155111: nativeBalance11155111,
-  }), [nativeBalance1, nativeBalance42161, nativeBalance8453, nativeBalance11155111]);
+  const nativeBalances = useNativeBalances(address);
 
   // ERC20 balances
   const { data: erc20Data, isLoading: erc20Loading, isError: erc20Error } = useReadContracts({
@@ -97,6 +102,9 @@ export function useAccountBalances(address: Address | undefined): AccountBalance
       enabled: !!address && erc20Queries.length > 0,
     },
   });
+
+  // Token prices
+  const { data: prices } = useTokenPrices();
 
   // Process all balances
   const result = useMemo(() => {
@@ -111,20 +119,24 @@ export function useAccountBalances(address: Address | undefined): AccountBalance
       const nativeBalance = nativeBalances[chain.id as keyof typeof nativeBalances];
       const nativeConfig = NATIVE_TOKENS[chain.id];
 
-      if (nativeBalance.isLoading) isLoading = true;
-      if (nativeBalance.isError) isError = true;
 
-      if (nativeBalance.data) {
+      if (nativeBalance?.isLoading || nativeBalance.status === 'pending') isLoading = true;
+      if (nativeBalance?.isError) isError = true;
+
+      if (nativeBalance?.data) {
         const balance = nativeBalance.data.value;
         const decimals = nativeConfig?.decimals || 18;
+        const symbol = normalizeTokenSymbol(nativeConfig?.symbol || 'ETH');
+        const price = prices?.[symbol] || 0;
+        
         balances.push({
-          symbol: nativeConfig?.symbol || 'ETH',
-          name: getTokenName(nativeConfig?.symbol || 'ETH'),
+          symbol,
+          name: getTokenName(symbol),
           decimals,
           chainId: chain.id,
           address: null,
           balance,
-          usdValue: Number(balance) / Math.pow(10, decimals), // 1:1 for MVP
+          usdValue: (Number(balance) / Math.pow(10, decimals)) * price,
         });
       }
     });
@@ -149,8 +161,9 @@ export function useAccountBalances(address: Address | undefined): AccountBalance
             decimalsResult?.status === 'success'
           ) {
             const balance = BigInt(balanceResult.result as string);
-            const symbol = symbolResult.result as string;
+            const symbol = normalizeTokenSymbol(symbolResult.result as string);
             const decimals = Number(decimalsResult.result);
+            const price = prices?.[symbol] || 0;
 
             balances.push({
               symbol,
@@ -159,7 +172,7 @@ export function useAccountBalances(address: Address | undefined): AccountBalance
               chainId: chain.id,
               address: tokenAddress,
               balance,
-              usdValue: 123,
+              usdValue: (Number(balance) / Math.pow(10, decimals)) * price,
             });
           }
         });
@@ -175,7 +188,7 @@ export function useAccountBalances(address: Address | undefined): AccountBalance
       isLoading,
       isError,
     };
-  }, [address, nativeBalances, erc20Data, erc20Loading, erc20Error]);
+  }, [address, nativeBalances, erc20Data, erc20Loading, erc20Error, prices]);
 
   return result;
 }
@@ -269,43 +282,36 @@ export function useMultiAccountBalances(addresses: Address[]): {
     return queries;
   }, [addresses]);
 
-  // Build native balance queries for all addresses
-  const nativeQueries = useMemo(() => {
-    const queries: { address: Address; chainId: number }[] = [];
-    addresses.forEach((addr) => {
-      supportedChains.forEach((chain) => {
-        queries.push({ address: addr, chainId: chain.id });
-      });
-    });
-    return queries;
-  }, [addresses]);
+  const config = useConfig();
+
+  // Native balance queries for all addresses
+  const nativeBalanceQueries = useQueries({
+    queries: addresses.flatMap((addr) =>
+      supportedChains.map((chain) => ({
+        queryKey: ['balance', 'native', addr, chain.id],
+        queryFn: () => getBalance(config, { address: addr, chainId: chain.id }),
+        staleTime: 1_000 * 30, // 30 seconds
+      }))
+    ),
+  });
+
+
 
   // Fetch all ERC20 balances in one call
   const { data: erc20Data, isLoading: erc20Loading, isError: erc20Error } = useReadContracts({
-    contracts: allErc20Queries.map(({ ownerAddress, ...query }) => query),
+    contracts: allErc20Queries.map(({ ...query }) => query),
     query: {
       enabled: addresses.length > 0 && allErc20Queries.length > 0,
     },
   });
 
+  // Token prices
+  const { data: prices } = useTokenPrices();
+
   // Fetch all native balances using useBalances pattern
   // We need to use individual useBalance calls but batched via useReadContracts is not possible for native
   // So we use wagmi's multicall approach with eth_getBalance
-  const nativeBalanceContracts = useMemo(() => {
-    return nativeQueries.map(({ address, chainId }) => ({
-      address: '0x0000000000000000000000000000000000000000' as Address,
-      abi: [{
-        inputs: [{ name: 'account', type: 'address' }],
-        name: 'balance',
-        outputs: [{ name: '', type: 'uint256' }],
-        stateMutability: 'view',
-        type: 'function',
-      }] as const,
-      functionName: 'balance' as const,
-      args: [address] as const,
-      chainId,
-    }));
-  }, [nativeQueries]);
+
 
   // For native balances, we'll use a different approach - fetch via getBalance
   // Since we can't easily batch native balance calls, we'll use the standard multicall for ERC20
@@ -314,8 +320,9 @@ export function useMultiAccountBalances(addresses: Address[]): {
   // Process results
   const result = useMemo(() => {
     const balancesByAddress = new Map<Address, AccountBalances>();
-    let isLoading = erc20Loading;
-    let isError = erc20Error;
+    // TODO: Handle native balance loading state properly
+    const isLoading = erc20Loading; 
+    const isError = erc20Error;
 
     // Initialize all addresses
     addresses.forEach((addr) => {
@@ -349,8 +356,9 @@ export function useMultiAccountBalances(addresses: Address[]): {
               decimalsResult?.status === 'success'
             ) {
               const balance = BigInt(balanceResult.result as string);
-              const symbol = symbolResult.result as string;
+              const symbol = normalizeTokenSymbol(symbolResult.result as string);
               const decimals = Number(decimalsResult.result);
+              const price = prices?.[symbol] || 0;
 
               accountData.balances.push({
                 symbol,
@@ -359,10 +367,34 @@ export function useMultiAccountBalances(addresses: Address[]): {
                 chainId: chain.id,
                 address: tokenAddress,
                 balance,
-                usdValue: Number(balance) / Math.pow(10, decimals),
+                usdValue: (Number(balance) / Math.pow(10, decimals)) * price,
               });
             }
           });
+        });
+
+        // Add native balances
+        supportedChains.forEach((chain) => {
+          const queryIndex = addresses.indexOf(ownerAddress) * supportedChains.length + supportedChains.indexOf(chain);
+          const nativeBalance = nativeBalanceQueries[queryIndex];
+          const nativeConfig = NATIVE_TOKENS[chain.id];
+
+          if (nativeBalance?.data) {
+            const balance = nativeBalance.data.value;
+            const decimals = nativeConfig?.decimals || 18;
+            const symbol = normalizeTokenSymbol(nativeConfig?.symbol || 'ETH');
+            const price = prices?.[symbol] || 0;
+
+            accountData.balances.push({
+              symbol,
+              name: getTokenName(symbol),
+              decimals,
+              chainId: chain.id,
+              address: null,
+              balance,
+              usdValue: (Number(balance) / Math.pow(10, decimals)) * price,
+            });
+          }
         });
 
         accountData.totalUsd = accountData.balances.reduce((sum, b) => sum + b.usdValue, 0);
@@ -372,7 +404,7 @@ export function useMultiAccountBalances(addresses: Address[]): {
     }
 
     return { balancesByAddress, isLoading, isError };
-  }, [addresses, erc20Data, erc20Loading, erc20Error]);
+  }, [addresses, erc20Data, erc20Loading, erc20Error, prices, nativeBalanceQueries]);
 
   return result;
 }

@@ -6,6 +6,7 @@ import { ChevronDown, ChevronUp, Copy, Check, Trash2, User } from 'lucide-react'
 import { shortenAddress, formatBalance, formatUSD } from '@/utils/format';
 import { type TokenBalance } from '@/hooks/useMultiChainBalances';
 import { chainNames } from '@/config/chains';
+import { formatTokenSymbol } from '@/config/tokens';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import s from './Portfolio.module.scss';
@@ -137,7 +138,9 @@ export function AccountCard({
                 <div className={s.accountTokens}>
                   {chainBalances.map((balance, index) => (
                     <div key={`${balance.symbol}-${balance.address}-${index}`} className={s.tokenRow}>
-                      <span className={s.tokenRowSymbol}>{balance.symbol}</span>
+                      <span className={s.tokenRowSymbol}>
+                        {formatTokenSymbol[balance.symbol] || balance.symbol}
+                      </span>
                       <span className={s.tokenRowBalance}>
                         {formatBalance(balance.balance, balance.decimals)}
                       </span>

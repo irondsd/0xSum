@@ -3,6 +3,7 @@
 import { formatBalance, formatUSD } from '@/utils/format';
 import { type AggregatedBalance } from '@/hooks/useMultiChainBalances';
 import { Skeleton } from '@/components/ui/skeleton';
+import { formatTokenSymbol } from '@/config/tokens';
 import s from './Portfolio.module.scss';
 
 interface TokenBreakdownProps {
@@ -37,25 +38,28 @@ export function TokenBreakdown({ balances, isLoading }: TokenBreakdownProps) {
 
   return (
     <div className={s.tokenList}>
-      {balances.map((balance) => (
-        <div key={balance.symbol} className={s.tokenItem}>
-          <div className={s.tokenIcon}>
-            {balance.symbol.slice(0, 2)}
-          </div>
-          <div className={s.tokenDetails}>
-            <div className={s.tokenHeader}>
-              <span className={s.tokenSymbol}>{balance.symbol}</span>
-              <span className={s.tokenUsd}>{formatUSD(balance.usdValue)}</span>
+      {balances.map((balance) => {
+        const displaySymbol = formatTokenSymbol[balance.symbol] || balance.symbol;
+        return (
+          <div key={balance.symbol} className={s.tokenItem}>
+            <div className={s.tokenIcon}>
+              {displaySymbol.slice(0, 2)}
             </div>
-            <div className={s.tokenSubtext}>
-              <span className={s.tokenName}>{balance.name}</span>
-              <span className={s.tokenBalance}>
-                {formatBalance(balance.totalBalance, balance.decimals)} {balance.symbol}
-              </span>
+            <div className={s.tokenDetails}>
+              <div className={s.tokenHeader}>
+                <span className={s.tokenSymbol}>{displaySymbol}</span>
+                <span className={s.tokenUsd}>{formatUSD(balance.usdValue)}</span>
+              </div>
+              <div className={s.tokenSubtext}>
+                <span className={s.tokenName}>{balance.name}</span>
+                <span className={s.tokenBalance}>
+                  {formatBalance(balance.totalBalance, balance.decimals)} {displaySymbol}
+                </span>
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
