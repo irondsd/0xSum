@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "No symbols provided" }, { status: 400 });
   }
 
-  if (!symbols.length) return {};
+  if (!symbols.length) return NextResponse.json({});
 
   const headers = new Headers();
   headers.append(
