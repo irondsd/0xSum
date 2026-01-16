@@ -65,3 +65,11 @@ export const blockExplorerUrls: Record<number, string> = {
   42161: 'https://arbiscan.io',
   11155111: 'https://sepolia.etherscan.io/',
 };
+
+// Native token configuration per chain
+export const NATIVE_TOKENS: Record<number, { symbol: string; decimals: number }> = {
+  1: { symbol: 'ETH', decimals: 18 },
+  42161: { symbol: 'ETH', decimals: 18 },
+  8453: { symbol: 'ETH', decimals: 18 },
+  11155111: { symbol: 'ETH', decimals: 18 },
+};

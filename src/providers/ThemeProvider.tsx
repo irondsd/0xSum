@@ -1,0 +1,20 @@
+'use client';
+
+import { ThemeProvider as NextThemesProvider } from 'next-theme';
+import type { FC, ReactNode } from 'react';
+
+type ThemeProviderProps = {
+  children: ReactNode;
+};
+
+export const ThemeProvider: FC<ThemeProviderProps> = ({ children }) => {
+  return (
+    <NextThemesProvider
+      attribute="class"
+      defaultTheme="dark"
+      storageKey="0xsum-theme"
+    >
+      {children}
+    </NextThemesProvider>
+  );
+};

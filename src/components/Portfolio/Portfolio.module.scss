@@ -1,0 +1,468 @@
+.container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+// Not Connected State
+.notConnected {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  max-width: 28rem;
+}
+
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--chart-2) 100%);
+  margin-bottom: 1rem;
+}
+
+.heroIcon {
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--primary-foreground);
+}
+
+.heroTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin: 0;
+}
+
+.heroDescription {
+  font-size: 1rem;
+  color: var(--muted-foreground);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.connectWrapper {
+  margin-top: 1rem;
+}
+
+.connectButton {
+  padding: 1rem 2.5rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--primary-foreground);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--chart-2) 100%);
+  border: none;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.2);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.3);
+  }
+}
+
+// Dashboard
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin: 0;
+}
+
+// Total Balance
+.totalBalance {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, var(--card) 0%, var(--muted) 100%);
+  border-radius: 1rem;
+  border: 1px solid var(--border);
+}
+
+.totalLabel {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+.totalAmount {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin: 0;
+  background: linear-gradient(135deg, var(--foreground) 0%, var(--muted-foreground) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+
+.totalSkeleton {
+  width: 12rem;
+  height: 3rem;
+}
+
+// Token List
+.tokenList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.tokenItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: var(--muted);
+  }
+}
+
+.tokenIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-weight: 600;
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+
+.tokenDetails {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.tokenHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tokenSymbol {
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.tokenUsd {
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.tokenSubtext {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.tokenName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tokenBalance {
+  flex-shrink: 0;
+}
+
+.tokenIconSkeleton {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+}
+
+.tokenNameSkeleton {
+  width: 6rem;
+  height: 1rem;
+}
+
+.tokenBalanceSkeleton {
+  width: 4rem;
+  height: 0.875rem;
+}
+
+.tokenInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.emptyState {
+  padding: 2rem;
+  text-align: center;
+  color: var(--muted-foreground);
+}
+
+// Accounts List
+.accountsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.accountCard {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.accountHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: var(--muted);
+  }
+}
+
+.accountInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.accountIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background: var(--muted);
+  color: var(--muted-foreground);
+}
+
+.accountDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.accountAddressRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.accountAddress {
+  font-weight: 600;
+  color: var(--foreground);
+  font-family: monospace;
+}
+
+.mainBadge {
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 0.125rem 0.375rem;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-radius: 0.25rem;
+}
+
+.copyButton {
+  padding: 0.25rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--muted-foreground);
+  border-radius: 0.25rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    color: var(--foreground);
+    background: var(--muted);
+  }
+}
+
+.accountUsd {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.accountActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.removeButton {
+  cursor: pointer;
+  &:hover {
+    background: var(--destructive) / 0.5;
+  }
+}
+
+.accountContent {
+  padding: 0 1rem 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.chainSection {
+  margin-top: 1rem;
+
+  &:first-child {
+    margin-top: 0.5rem;
+  }
+}
+
+.chainName {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted-foreground);
+  margin: 0 0 0.5rem;
+}
+
+.accountTokens {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.tokenRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--muted);
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.tokenRowSymbol {
+  font-weight: 600;
+  color: var(--foreground);
+  min-width: 4rem;
+}
+
+.tokenRowBalance {
+  flex: 1;
+  color: var(--foreground);
+  text-align: right;
+  font-family: monospace;
+}
+
+.tokenRowUsd {
+  color: var(--muted-foreground);
+  min-width: 5rem;
+  text-align: right;
+}
+
+.noTokens {
+  text-align: center;
+  color: var(--muted-foreground);
+  padding: 1rem;
+}
+
+// Add Sub Account
+.addSubAccount {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.addInputWrapper {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.addInput {
+  flex: 1;
+}
+
+.addButton {
+  flex-shrink: 0;
+}
+
+.addError {
+  font-size: 0.875rem;
+  color: var(--destructive);
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .heroTitle {
+    font-size: 1.5rem;
+  }
+
+  .totalAmount {
+    font-size: 2rem;
+  }
+
+  .tokenRow {
+    flex-wrap: wrap;
+  }
+
+  .tokenRowBalance {
+    order: 3;
+    flex: 0 0 100%;
+    text-align: left;
+    margin-top: 0.25rem;
+  }
+}
