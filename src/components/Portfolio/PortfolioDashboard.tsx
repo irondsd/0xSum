@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { type Address } from 'viem';
 import { useSubAccounts } from '@/hooks/useSubAccounts';
-import { useAccountBalances, useMultiAccountBalances, aggregateBalances, type AccountBalances } from '@/hooks/useMultiChainBalances';
+import { useMultiAccountBalances, aggregateBalances, type AccountBalances } from '@/hooks/useMultiChainBalances';
 import { TotalBalance } from './TotalBalance';
 import { TokenBreakdown } from './TokenBreakdown';
 import { AccountCard } from './AccountCard';
@@ -23,28 +23,17 @@ export function PortfolioDashboard({ mainAddress }: PortfolioDashboardProps) {
     return [mainAddress, ...subAccounts];
   }, [mainAddress, subAccounts]);
   
-  // Fetch balances for all accounts at once (avoids Rules of Hooks violation)
+  // Fetch balances for all accounts at once
   const { balancesByAddress, isLoading: balancesLoading, isError } = useMultiAccountBalances(allAddresses);
   
-  // Also fetch native balances for main account
-  const mainBalances = useAccountBalances(mainAddress);
+  // Get main account balances from the multi-account result
+  const mainBalances = balancesByAddress.get(mainAddress);
   
-  // Combine native + ERC20 balances for each account
+  // Prepare list of all account balances for aggregation and display
   const allBalances: AccountBalances[] = useMemo(() => {
     return allAddresses.map((addr) => {
-      const erc20Balances = balancesByAddress.get(addr);
-      // For main account, merge native balances from useAccountBalances
-      if (addr === mainAddress && mainBalances) {
-        const nativeOnly = mainBalances.balances.filter(b => b.address === null);
-        return {
-          address: addr,
-          balances: [...nativeOnly, ...(erc20Balances?.balances || [])],
-          totalUsd: (erc20Balances?.totalUsd || 0) + nativeOnly.reduce((sum, b) => sum + b.usdValue, 0),
-          isLoading: mainBalances.isLoading || (erc20Balances?.isLoading || false),
-          isError: mainBalances.isError || (erc20Balances?.isError || false),
-        };
-      }
-      return erc20Balances || {
+      const accountBalances = balancesByAddress.get(addr);
+      return accountBalances || {
         address: addr,
         balances: [],
         totalUsd: 0,
@@ -52,7 +41,7 @@ export function PortfolioDashboard({ mainAddress }: PortfolioDashboardProps) {
         isError,
       };
     });
-  }, [allAddresses, balancesByAddress, mainAddress, mainBalances, balancesLoading, isError]);
+  }, [allAddresses, balancesByAddress, balancesLoading, isError]);
   
   const aggregated = aggregateBalances(allBalances);
   
@@ -60,7 +49,7 @@ export function PortfolioDashboard({ mainAddress }: PortfolioDashboardProps) {
   const totalUsd = allBalances.reduce((sum, account) => sum + (account?.totalUsd || 0), 0);
   
   // Check loading state
-  const isLoading = !isLoaded || balancesLoading || mainBalances?.isLoading;
+  const isLoading = !isLoaded || balancesLoading;
   
   const handleAddSubAccount = (address: string) => {
     return addSubAccount(address);
