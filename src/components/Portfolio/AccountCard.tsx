@@ -33,29 +33,38 @@ export function AccountCard({
 
   const totalUsd = balances.reduce((sum, b) => sum + b.usdValue, 0);
 
-  const handleCopy = useCallback(async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    try {
-      await navigator.clipboard.writeText(address);
-      setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2500);
-    } catch (error) {
-      console.error('Failed to copy address:', error);
-    }
-  }, [address]);
+  const handleCopy = useCallback(
+    async (e: React.MouseEvent) => {
+      e.stopPropagation();
+      try {
+        await navigator.clipboard.writeText(address);
+        setIsCopied(true);
+        setTimeout(() => setIsCopied(false), 2500);
+      } catch (error) {
+        console.error('Failed to copy address:', error);
+      }
+    },
+    [address],
+  );
 
-  const handleRemove = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    onRemove?.();
-  }, [onRemove]);
+  const handleRemove = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      onRemove?.();
+    },
+    [onRemove],
+  );
 
   // Group balances by chain
-  const balancesByChain = balances.reduce((acc, balance) => {
-    const chainId = balance.chainId;
-    if (!acc[chainId]) acc[chainId] = [];
-    acc[chainId].push(balance);
-    return acc;
-  }, {} as Record<number, TokenBalance[]>);
+  const balancesByChain = balances.reduce(
+    (acc, balance) => {
+      const chainId = balance.chainId;
+      if (!acc[chainId]) acc[chainId] = [];
+      acc[chainId].push(balance);
+      return acc;
+    },
+    {} as Record<number, TokenBalance[]>,
+  );
 
   return (
     <div className={s.accountCard}>
@@ -80,22 +89,11 @@ export function AccountCard({
             <div className={s.accountAddressRow}>
               <span className={s.accountAddress}>{shortenAddress(address)}</span>
               {isMain && <span className={s.mainBadge}>Main</span>}
-              <button
-                className={s.copyButton}
-                onClick={handleCopy}
-                type="button"
-                aria-label="Copy address"
-              >
-                {isCopied ? (
-                  <Check className="size-3.5 text-green-500" />
-                ) : (
-                  <Copy className="size-3.5" />
-                )}
+              <button className={s.copyButton} onClick={handleCopy} type="button" aria-label="Copy address">
+                {isCopied ? <Check className="size-3.5 text-green-500" /> : <Copy className="size-3.5" />}
               </button>
             </div>
-            <span className={s.accountUsd}>
-              {isLoading ? <Skeleton className="h-4 w-16" /> : formatUSD(totalUsd)}
-            </span>
+            <span className={s.accountUsd}>{isLoading ? <Skeleton className="h-4 w-16" /> : formatUSD(totalUsd)}</span>
           </div>
         </div>
 
@@ -132,21 +130,19 @@ export function AccountCard({
           ) : (
             Object.entries(balancesByChain).map(([chainId, chainBalances]) => (
               <div key={chainId} className={s.chainSection}>
-                <h4 className={s.chainName}>
-                  {chainNames[Number(chainId)] || `Chain ${chainId}`}
-                </h4>
+                <h4 className={s.chainName}>{chainNames[Number(chainId)] || `Chain ${chainId}`}</h4>
                 <div className={s.accountTokens}>
-                  {chainBalances.map((balance, index) => (
-                    <div key={`${balance.symbol}-${balance.address}-${index}`} className={s.tokenRow}>
-                      <span className={s.tokenRowSymbol}>
-                        {formatTokenSymbol[balance.symbol] || balance.symbol}
-                      </span>
-                      <span className={s.tokenRowBalance}>
-                        {formatBalance(balance.balance, balance.decimals)}
-                      </span>
-                      <span className={s.tokenRowUsd}>{formatUSD(balance.usdValue)}</span>
-                    </div>
-                  ))}
+                  {chainBalances.map((balance, index) => {
+                    if (!balance.balance) return null;
+
+                    return (
+                      <div key={`${balance.symbol}-${balance.address}-${index}`} className={s.tokenRow}>
+                        <span className={s.tokenRowSymbol}>{formatTokenSymbol[balance.symbol] || balance.symbol}</span>
+                        <span className={s.tokenRowBalance}>{formatBalance(balance.balance, balance.decimals)}</span>
+                        <span className={s.tokenRowUsd}>{formatUSD(balance.usdValue)}</span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             ))

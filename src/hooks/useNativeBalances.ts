@@ -19,9 +19,12 @@ export function useNativeBalances(address: Address | undefined) {
   });
 
   return useMemo(() => {
-    return supportedChains.reduce((acc, chain, index) => {
-      acc[chain.id] = queries[index];
-      return acc;
-    }, {} as Record<number, typeof queries[number]>);
+    return supportedChains.reduce(
+      (acc, chain, index) => {
+        acc[chain.id] = queries[index];
+        return acc;
+      },
+      {} as Record<number, (typeof queries)[number]>,
+    );
   }, [queries]);
 }

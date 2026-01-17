@@ -13,9 +13,5 @@ const sizeClasses = {
 };
 
 export function Spinner({ className, size = 'md' }: SpinnerProps) {
-  return (
-    <Loader2
-      className={cn('animate-spin text-muted-foreground', sizeClasses[size], className)}
-    />
-  );
+  return <Loader2 className={cn('animate-spin text-muted-foreground', sizeClasses[size], className)} />;
 }

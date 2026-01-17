@@ -7,7 +7,6 @@ import type { FC, ReactNode } from 'react';
 
 import { WagmiProvider } from 'wagmi';
 
-
 import { getQueryClient } from '@/utils/getQueryClient';
 import { config } from '@/config/wagmi';
 
@@ -20,13 +19,10 @@ const appInfo = { appName: '0xSum' };
 export const Web3Provider: FC<WagmiProviderProps> = ({ children }) => {
   const queryClient = getQueryClient();
 
-
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider  appInfo={appInfo}>
-          {children}
-        </RainbowKitProvider>
+        <RainbowKitProvider appInfo={appInfo}>{children}</RainbowKitProvider>
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </WagmiProvider>

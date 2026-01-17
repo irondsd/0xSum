@@ -25,9 +25,7 @@ export function useSubAccounts(mainAddress: Address | undefined) {
         if (stored) {
           const parsed = JSON.parse(stored);
           if (Array.isArray(parsed)) {
-            accounts = parsed.filter(
-              (addr): addr is Address => typeof addr === 'string' && isAddress(addr)
-            );
+            accounts = parsed.filter((addr): addr is Address => typeof addr === 'string' && isAddress(addr));
           }
         }
       } catch (error) {
@@ -43,7 +41,7 @@ export function useSubAccounts(mainAddress: Address | undefined) {
   const saveToStorage = useCallback(
     (accounts: Address[]) => {
       if (!mainAddress) return;
-      
+
       try {
         const storageKey = `${STORAGE_KEY_PREFIX}${mainAddress.toLowerCase()}`;
         localStorage.setItem(storageKey, JSON.stringify(accounts));
@@ -51,7 +49,7 @@ export function useSubAccounts(mainAddress: Address | undefined) {
         console.error('Failed to save sub-accounts to localStorage:', error);
       }
     },
-    [mainAddress]
+    [mainAddress],
   );
 
   const addSubAccount = useCallback(
@@ -78,18 +76,16 @@ export function useSubAccounts(mainAddress: Address | undefined) {
       saveToStorage(newAccounts);
       return { success: true };
     },
-    [mainAddress, subAccounts, saveToStorage]
+    [mainAddress, subAccounts, saveToStorage],
   );
 
   const removeSubAccount = useCallback(
     (address: Address) => {
-      const newAccounts = subAccounts.filter(
-        (addr) => addr.toLowerCase() !== address.toLowerCase()
-      );
+      const newAccounts = subAccounts.filter((addr) => addr.toLowerCase() !== address.toLowerCase());
       setSubAccounts(newAccounts);
       saveToStorage(newAccounts);
     },
-    [subAccounts, saveToStorage]
+    [subAccounts, saveToStorage],
   );
 
   return {

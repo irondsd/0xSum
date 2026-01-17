@@ -9,11 +9,7 @@ type ThemeProviderProps = {
 
 export const ThemeProvider: FC<ThemeProviderProps> = ({ children }) => {
   return (
-    <NextThemesProvider
-      attribute="class"
-      defaultTheme="dark"
-      storageKey="0xsum-theme"
-    >
+    <NextThemesProvider attribute="class" defaultTheme="dark" storageKey="0xsum-theme">
       {children}
     </NextThemesProvider>
   );

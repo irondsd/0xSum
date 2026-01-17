@@ -17,40 +17,42 @@ interface PortfolioDashboardProps {
 
 export function PortfolioDashboard({ mainAddress }: PortfolioDashboardProps) {
   const { subAccounts, isLoaded, addSubAccount, removeSubAccount } = useSubAccounts(mainAddress);
-  
+
   // Combine all addresses into a single array for the multi-account hook
   const allAddresses = useMemo(() => {
     return [mainAddress, ...subAccounts];
   }, [mainAddress, subAccounts]);
-  
+
   // Fetch balances for all accounts at once
   const { balancesByAddress, isLoading: balancesLoading, isError } = useMultiAccountBalances(allAddresses);
-  
+
   // Get main account balances from the multi-account result
   const mainBalances = balancesByAddress.get(mainAddress);
-  
+
   // Prepare list of all account balances for aggregation and display
   const allBalances: AccountBalances[] = useMemo(() => {
     return allAddresses.map((addr) => {
       const accountBalances = balancesByAddress.get(addr);
-      return accountBalances || {
-        address: addr,
-        balances: [],
-        totalUsd: 0,
-        isLoading: balancesLoading,
-        isError,
-      };
+      return (
+        accountBalances || {
+          address: addr,
+          balances: [],
+          totalUsd: 0,
+          isLoading: balancesLoading,
+          isError,
+        }
+      );
     });
   }, [allAddresses, balancesByAddress, balancesLoading, isError]);
-  
+
   const aggregated = aggregateBalances(allBalances);
-  
+
   // Calculate total USD
   const totalUsd = allBalances.reduce((sum, account) => sum + (account?.totalUsd || 0), 0);
-  
+
   // Check loading state
   const isLoading = !isLoaded || balancesLoading;
-  
+
   const handleAddSubAccount = (address: string) => {
     return addSubAccount(address);
   };
@@ -58,7 +60,7 @@ export function PortfolioDashboard({ mainAddress }: PortfolioDashboardProps) {
   return (
     <div className={s.dashboard}>
       <TotalBalance totalUsd={totalUsd} isLoading={isLoading} />
-      
+
       <section className={s.section}>
         <h2 className={s.sectionTitle}>Token Breakdown</h2>
         <TokenBreakdown balances={aggregated} isLoading={isLoading} />
@@ -83,7 +85,7 @@ export function PortfolioDashboard({ mainAddress }: PortfolioDashboardProps) {
           {/* Sub Accounts */}
           {subAccounts.map((addr) => {
             // Find this address in allBalances (skip index 0 which is main)
-            const accountBalance = allBalances.find(b => b.address === addr);
+            const accountBalance = allBalances.find((b) => b.address === addr);
             return (
               <AccountCard
                 key={addr}

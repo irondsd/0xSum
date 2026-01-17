@@ -164,14 +164,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 50%;
-  background: var(--primary);
-  color: var(--primary-foreground);
-  font-weight: 600;
-  font-size: 0.75rem;
-  flex-shrink: 0;
 }
 
 .tokenDetails {
@@ -455,13 +447,17 @@
     font-size: 2rem;
   }
 
+  .tokenRowSymbol {
+    flex: 1;
+  }
+
   .tokenRow {
     flex-wrap: wrap;
   }
 
   .tokenRowBalance {
     order: 3;
-    flex: 0 0 100%;
+    flex: 0 0 1;
     text-align: left;
     margin-top: 0.25rem;
   }

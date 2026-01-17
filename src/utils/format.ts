@@ -9,7 +9,7 @@ import { type Address, formatUnits } from 'viem';
 export function formatBalance(value: bigint, decimals: number): string {
   const formatted = formatUnits(value, decimals);
   const num = parseFloat(formatted);
-  
+
   if (num === 0) return '0';
   if (num < 0.0001) return '<0.0001';
   if (num < 1) return num.toFixed(4);
@@ -26,7 +26,7 @@ export function formatBalance(value: bigint, decimals: number): string {
 export function formatUSD(value: number): string {
   if (value === 0) return '$0.00';
   if (value < 0.01) return '<$0.01';
-  
+
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',

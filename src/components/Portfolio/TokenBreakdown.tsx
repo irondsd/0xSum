@@ -5,6 +5,7 @@ import { type AggregatedBalance } from '@/hooks/useMultiChainBalances';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatTokenSymbol } from '@/config/tokens';
 import s from './Portfolio.module.scss';
+import Image from 'next/image';
 
 interface TokenBreakdownProps {
   balances: AggregatedBalance[];
@@ -36,14 +37,18 @@ export function TokenBreakdown({ balances, isLoading }: TokenBreakdownProps) {
     );
   }
 
+  // icons downloaded from https://cryptofonts.com/icons.html
+
   return (
     <div className={s.tokenList}>
       {balances.map((balance) => {
+        if (!balance.totalBalance) return null;
+
         const displaySymbol = formatTokenSymbol[balance.symbol] || balance.symbol;
         return (
           <div key={balance.symbol} className={s.tokenItem}>
             <div className={s.tokenIcon}>
-              {displaySymbol}
+              <Image src={`/icons/tokens/${balance.symbol}.svg`} alt={displaySymbol} width={32} height={32} />
             </div>
             <div className={s.tokenDetails}>
               <div className={s.tokenHeader}>

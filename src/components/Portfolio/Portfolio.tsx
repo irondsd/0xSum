@@ -10,11 +10,7 @@ export function Portfolio() {
 
   return (
     <div className={s.container}>
-      {isConnected && address ? (
-        <PortfolioDashboard mainAddress={address} />
-      ) : (
-        <NotConnected />
-      )}
+      {isConnected && address ? <PortfolioDashboard mainAddress={address} /> : <NotConnected />}
     </div>
   );
 }

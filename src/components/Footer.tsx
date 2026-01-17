@@ -30,9 +30,7 @@ export function Footer() {
         ))}
       </nav>
 
-      <p className={s.copyright}>
-        © {new Date().getFullYear()} 0xSum. All rights reserved.
-      </p>
+      <p className={s.copyright}>© {new Date().getFullYear()} 0xSum. All rights reserved.</p>
     </footer>
   );
 }

@@ -96,7 +96,11 @@ export function useAccountBalances(address: Address | undefined): AccountBalance
   const nativeBalances = useNativeBalances(address);
 
   // ERC20 balances
-  const { data: erc20Data, isLoading: erc20Loading, isError: erc20Error } = useReadContracts({
+  const {
+    data: erc20Data,
+    isLoading: erc20Loading,
+    isError: erc20Error,
+  } = useReadContracts({
     contracts: erc20Queries,
     query: {
       enabled: !!address && erc20Queries.length > 0,
@@ -119,7 +123,6 @@ export function useAccountBalances(address: Address | undefined): AccountBalance
       const nativeBalance = nativeBalances[chain.id as keyof typeof nativeBalances];
       const nativeConfig = NATIVE_TOKENS[chain.id];
 
-
       if (nativeBalance?.isLoading || nativeBalance.status === 'pending') isLoading = true;
       if (nativeBalance?.isError) isError = true;
 
@@ -128,7 +131,7 @@ export function useAccountBalances(address: Address | undefined): AccountBalance
         const decimals = nativeConfig?.decimals || 18;
         const symbol = normalizeTokenSymbol(nativeConfig?.symbol || 'ETH');
         const price = prices?.[symbol] || 0;
-        
+
         balances.push({
           symbol,
           name: getTokenName(symbol),
@@ -291,14 +294,16 @@ export function useMultiAccountBalances(addresses: Address[]): {
         queryKey: ['balance', 'native', addr, chain.id],
         queryFn: () => getBalance(config, { address: addr, chainId: chain.id }),
         staleTime: 1_000 * 30, // 30 seconds
-      }))
+      })),
     ),
   });
 
-
-
   // Fetch all ERC20 balances in one call
-  const { data: erc20Data, isLoading: erc20Loading, isError: erc20Error } = useReadContracts({
+  const {
+    data: erc20Data,
+    isLoading: erc20Loading,
+    isError: erc20Error,
+  } = useReadContracts({
     contracts: allErc20Queries.map(({ ...query }) => query),
     query: {
       enabled: addresses.length > 0 && allErc20Queries.length > 0,
@@ -312,16 +317,15 @@ export function useMultiAccountBalances(addresses: Address[]): {
   // We need to use individual useBalance calls but batched via useReadContracts is not possible for native
   // So we use wagmi's multicall approach with eth_getBalance
 
-
   // For native balances, we'll use a different approach - fetch via getBalance
   // Since we can't easily batch native balance calls, we'll use the standard multicall for ERC20
   // and accept that native balances need a different approach
-  
+
   // Process results
   const result = useMemo(() => {
     const balancesByAddress = new Map<Address, AccountBalances>();
     // TODO: Handle native balance loading state properly
-    const isLoading = erc20Loading; 
+    const isLoading = erc20Loading;
     const isError = erc20Error;
 
     // Initialize all addresses

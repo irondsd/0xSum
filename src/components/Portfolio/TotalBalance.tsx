@@ -13,11 +13,7 @@ export function TotalBalance({ totalUsd, isLoading }: TotalBalanceProps) {
   return (
     <div className={s.totalBalance}>
       <p className={s.totalLabel}>Total Portfolio Value</p>
-      {isLoading ? (
-        <Skeleton className={s.totalSkeleton} />
-      ) : (
-        <p className={s.totalAmount}>{formatUSD(totalUsd)}</p>
-      )}
+      {isLoading ? <Skeleton className={s.totalSkeleton} /> : <p className={s.totalAmount}>{formatUSD(totalUsd)}</p>}
     </div>
   );
 }
