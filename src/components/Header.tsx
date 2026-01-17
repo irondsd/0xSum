@@ -10,7 +10,6 @@ export function Header() {
       <div className={s.logo}>
         <span className={s.logoText}>0xSum</span>
       </div>
-
       <div className={s.actions}>
         <ThemeToggle />
         <ConnectButton
