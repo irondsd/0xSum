@@ -1,10 +1,10 @@
-import { type Chain, arbitrum, base, mainnet, sepolia } from 'wagmi/chains';
+import { type Chain, arbitrum, base, mainnet, bsc } from 'wagmi/chains';
 
 const chainLookup = {
   [mainnet.id]: mainnet,
   [arbitrum.id]: arbitrum,
   [base.id]: base,
-  [sepolia.id]: sepolia,
+  [bsc.id]: bsc,
 } as const;
 
 const availableChainIds = Object.values(chainLookup).map((chain) => chain.id);
@@ -41,10 +41,6 @@ const mappedSupportedChains = configChainIds.map(
 assertNonEmpty(mappedSupportedChains);
 export const supportedChains = mappedSupportedChains;
 
-const includedTested = configChainIds.includes(sepolia.id);
-
-export const activityPagesupportedChains = [mainnet, arbitrum, ...(includedTested ? [sepolia] : [])] as const;
-
 // Exclude chains that are already supported from the "coming soon" list.
 export const comingSoonChains = [mainnet, base].filter(
   (chain) => !supportedChains.map((c) => c.id).includes(chain.id),
@@ -56,14 +52,14 @@ export const chainNames: Record<number, string> = {
   1: 'Ethereum',
   8453: 'Base',
   42161: 'Arbitrum',
-  11155111: 'Sepolia',
+  56: 'BSC',
 };
 
 export const blockExplorerUrls: Record<number, string> = {
   1: 'https://etherscan.io',
   8453: 'https://basescan.org',
   42161: 'https://arbiscan.io',
-  11155111: 'https://sepolia.etherscan.io/',
+  56: 'https://bscscan.com',
 };
 
 // Native token configuration per chain
@@ -71,5 +67,5 @@ export const NATIVE_TOKENS: Record<number, { symbol: string; decimals: number }>
   1: { symbol: 'ETH', decimals: 18 },
   42161: { symbol: 'ETH', decimals: 18 },
   8453: { symbol: 'ETH', decimals: 18 },
-  11155111: { symbol: 'ETH', decimals: 18 },
+  56: { symbol: 'BNB', decimals: 18 },
 };

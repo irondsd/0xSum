@@ -1,6 +1,6 @@
 'use client';
 
-import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { RainbowKitProvider, darkTheme, lightTheme } from '@rainbow-me/rainbowkit';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import type { FC, ReactNode } from 'react';
@@ -9,6 +9,7 @@ import { WagmiProvider } from 'wagmi';
 
 import { getQueryClient } from '@/utils/getQueryClient';
 import { config } from '@/config/wagmi';
+import useTheme from 'next-theme';
 
 type WagmiProviderProps = {
   children: ReactNode;
@@ -19,10 +20,14 @@ const appInfo = { appName: '0xSum' };
 export const Web3Provider: FC<WagmiProviderProps> = ({ children }) => {
   const queryClient = getQueryClient();
 
+  const { theme } = useTheme();
+
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider appInfo={appInfo}>{children}</RainbowKitProvider>
+        <RainbowKitProvider appInfo={appInfo} theme={theme === 'dark' ? darkTheme() : lightTheme()}>
+          {children}
+        </RainbowKitProvider>
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </WagmiProvider>

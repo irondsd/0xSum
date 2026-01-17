@@ -14,11 +14,14 @@ export function Header() {
       <div className={s.actions}>
         <ThemeToggle />
         <ConnectButton
-          showBalance={false}
           chainStatus="icon"
           accountStatus={{
             smallScreen: 'avatar',
             largeScreen: 'full',
+          }}
+          showBalance={{
+            smallScreen: false,
+            largeScreen: true,
           }}
         />
       </div>
