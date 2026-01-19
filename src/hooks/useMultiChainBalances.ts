@@ -45,8 +45,6 @@ export function useTokenPrices(symbols: string[] = Object.keys(TOKEN_NAMES)) {
   });
 }
 
-
-
 /**
  * Aggregate balances by token symbol across all accounts
  */
