@@ -1,71 +1,49 @@
-import { type Chain, arbitrum, base, mainnet, bsc } from 'wagmi/chains';
+import { http } from 'viem';
+import { arbitrum, base, mainnet, bsc, polygon, optimism, avalanche } from 'wagmi/chains';
 
-const chainLookup = {
-  [mainnet.id]: mainnet,
-  [arbitrum.id]: arbitrum,
-  [base.id]: base,
-  [bsc.id]: bsc,
-} as const;
-
-const availableChainIds = Object.values(chainLookup).map((chain) => chain.id);
-const configChainIds = JSON.parse(process.env.NEXT_PUBLIC_CHAINS || '[]').map((id: number) => id) as readonly number[];
-
-// Narrowed type representing only IDs present in `availableChainIds`.
-type AvailableChainIds = (typeof availableChainIds)[number];
-
-function assertAvailableChainIds(arr: readonly number[]): asserts arr is AvailableChainIds[] {
-  if (!arr.every((id) => availableChainIds.includes(id as AvailableChainIds))) {
-    throw new Error(
-      `Invalid chain IDs in NEXT_PUBLIC_CHAINS: ${arr.join(', ')}. Available IDs are: ${availableChainIds.join(', ')}`,
-    );
-  }
-}
-
-// Narrow down configChainIds to AvailableChainIds[]
-assertAvailableChainIds(configChainIds);
-
-if (configChainIds.length === 0) {
-  throw new Error('NEXT_PUBLIC_CHAINS must contain at least one chain id');
-}
-
-// Helper to assert an array is non-empty
-function assertNonEmpty<T>(arr: readonly T[]): asserts arr is readonly [T, ...T[]] {
-  if (arr.length === 0) throw new Error('Expected a non-empty array');
-}
-
-const mappedSupportedChains = configChainIds.map(
-  (id) => chainLookup[id as keyof typeof chainLookup],
-) as readonly Chain[];
-
-// Ensure non-empty and type narrowing
-assertNonEmpty(mappedSupportedChains);
-export const supportedChains = mappedSupportedChains;
-
-// Exclude chains that are already supported from the "coming soon" list.
-export const comingSoonChains = [mainnet, base].filter(
-  (chain) => !supportedChains.map((c) => c.id).includes(chain.id),
-) as Chain[];
+export const supportedChains = [mainnet, arbitrum, base, bsc, polygon, optimism, avalanche] as const;
 
 export type SupportedChain = (typeof supportedChains)[number]['id'];
 
-export const chainNames: Record<number, string> = {
-  1: 'Ethereum',
-  8453: 'Base',
-  42161: 'Arbitrum',
-  56: 'BSC',
+const drpcKey = process.env.NEXT_PUBLIC_DRPC_API_KEY;
+
+export const transports: Record<SupportedChain, ReturnType<typeof http>> = {
+  [mainnet.id]: http(`https://lb.drpc.org/ethereum/${drpcKey}`),
+  [arbitrum.id]: http(`https://lb.drpc.org/arbitrum/${drpcKey}`),
+  [base.id]: http(`https://lb.drpc.org/base/${drpcKey}`),
+  [bsc.id]: http(`https://lb.drpc.live/bsc/${drpcKey}`),
+  [polygon.id]: http(`https://lb.drpc.live/polygon/${drpcKey}`),
+  [optimism.id]: http(`https://lb.drpc.live/optimism/${drpcKey}`),
+  [avalanche.id]: http(`https://lb.drpc.live/avalanche/${drpcKey}`),
+} as const;
+
+export const chainNames: Record<SupportedChain, string> = {
+  [mainnet.id]: 'Ethereum',
+  [base.id]: 'Base',
+  [arbitrum.id]: 'Arbitrum',
+  [bsc.id]: 'BSC',
+  [polygon.id]: 'Polygon',
+  [optimism.id]: 'Optimism',
+  [avalanche.id]: 'Avalanche',
 };
 
-export const blockExplorerUrls: Record<number, string> = {
-  1: 'https://etherscan.io',
-  8453: 'https://basescan.org',
-  42161: 'https://arbiscan.io',
-  56: 'https://bscscan.com',
+export const blockExplorerUrls: Record<SupportedChain, string> = {
+  [mainnet.id]: 'https://etherscan.io',
+  [base.id]: 'https://basescan.org',
+  [arbitrum.id]: 'https://arbiscan.io',
+  [bsc.id]: 'https://bscscan.com',
+  [polygon.id]: 'https://polygonscan.com',
+  [optimism.id]: 'https://optimistic.etherscan.io',
+  [avalanche.id]: 'https://snowtrace.io',
 };
 
 // Native token configuration per chain
-export const NATIVE_TOKENS: Record<number, { symbol: string; decimals: number }> = {
-  1: { symbol: 'ETH', decimals: 18 },
-  42161: { symbol: 'ETH', decimals: 18 },
-  8453: { symbol: 'ETH', decimals: 18 },
-  56: { symbol: 'BNB', decimals: 18 },
+export const NATIVE_TOKENS: Record<SupportedChain, { symbol: string; decimals: number }> = {
+  [mainnet.id]: { symbol: 'ETH', decimals: 18 },
+  [arbitrum.id]: { symbol: 'ETH', decimals: 18 },
+  [base.id]: { symbol: 'ETH', decimals: 18 },
+  [bsc.id]: { symbol: 'BNB', decimals: 18 },
+  [polygon.id]: { symbol: 'POL', decimals: 18 },
+  [optimism.id]: { symbol: 'ETH', decimals: 18 },
+  [avalanche.id]: { symbol: 'AVAX', decimals: 18 },
 };

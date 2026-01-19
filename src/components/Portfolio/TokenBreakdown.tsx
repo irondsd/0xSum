@@ -43,6 +43,7 @@ export function TokenBreakdown({ balances, isLoading }: TokenBreakdownProps) {
     <div className={s.tokenList}>
       {balances.map((balance) => {
         if (!balance.totalBalance) return null;
+        if (balance.usdValue < 0.01) return null; // todo: make this configurable
 
         const displaySymbol = formatTokenSymbol[balance.symbol] || balance.symbol;
         return (

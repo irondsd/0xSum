@@ -54,6 +54,9 @@ export const TOKEN_NAMES: Record<string, string> = {
   wbtc: 'Wrapped Bitcoin',
   dai: 'Dai Stablecoin',
   xaut: 'Tether Gold',
+  avax: 'Avalanche',
+  bnb: 'Binance Coin',
+  pol: 'Polygon',
 };
 
 export const formatTokenSymbol: Record<string, string> = {
@@ -66,6 +69,9 @@ export const formatTokenSymbol: Record<string, string> = {
   wbtc: 'WBTC',
   dai: 'DAI',
   xaut: 'XAUt',
+  avax: 'AVAX',
+  bnb: 'BNB',
+  pol: 'Polygon',
 };
 
 // Helper to get token name from symbol

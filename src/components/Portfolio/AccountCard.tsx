@@ -5,7 +5,7 @@ import { type Address } from 'viem';
 import { ChevronDown, ChevronUp, Copy, Check, Trash2, User } from 'lucide-react';
 import { shortenAddress, formatBalance, formatUSD } from '@/utils/format';
 import { type TokenBalance } from '@/hooks/useMultiChainBalances';
-import { chainNames } from '@/config/chains';
+import { chainNames, type SupportedChain } from '@/config/chains';
 import { formatTokenSymbol } from '@/config/tokens';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -128,24 +128,31 @@ export function AccountCard({
           ) : Object.entries(balancesByChain).length === 0 ? (
             <p className={s.noTokens}>No tokens found</p>
           ) : (
-            Object.entries(balancesByChain).map(([chainId, chainBalances]) => (
-              <div key={chainId} className={s.chainSection}>
-                <h4 className={s.chainName}>{chainNames[Number(chainId)] || `Chain ${chainId}`}</h4>
-                <div className={s.accountTokens}>
-                  {chainBalances.map((balance, index) => {
-                    if (!balance.balance) return null;
+            Object.entries(balancesByChain).map(([chainId, chainBalances]) => {
+              const totalBalances = chainBalances.reduce((sum, b) => sum + b.usdValue, 0);
+              if (chainBalances.length === 0 || totalBalances === 0) return null;
 
-                    return (
-                      <div key={`${balance.symbol}-${balance.address}-${index}`} className={s.tokenRow}>
-                        <span className={s.tokenRowSymbol}>{formatTokenSymbol[balance.symbol] || balance.symbol}</span>
-                        <span className={s.tokenRowBalance}>{formatBalance(balance.balance, balance.decimals)}</span>
-                        <span className={s.tokenRowUsd}>{formatUSD(balance.usdValue)}</span>
-                      </div>
-                    );
-                  })}
+              return (
+                <div key={chainId} className={s.chainSection}>
+                  <h4 className={s.chainName}>{chainNames[Number(chainId) as SupportedChain] || `Chain ${chainId}`}</h4>
+                  <div className={s.accountTokens}>
+                    {chainBalances.map((balance, index) => {
+                      if (!balance.balance) return null;
+
+                      return (
+                        <div key={`${balance.symbol}-${balance.address}-${index}`} className={s.tokenRow}>
+                          <span className={s.tokenRowSymbol}>
+                            {formatTokenSymbol[balance.symbol] || balance.symbol}
+                          </span>
+                          <span className={s.tokenRowBalance}>{formatBalance(balance.balance, balance.decimals)}</span>
+                          <span className={s.tokenRowUsd}>{formatUSD(balance.usdValue)}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
       )}
