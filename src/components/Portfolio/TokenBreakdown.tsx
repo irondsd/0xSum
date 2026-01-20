@@ -4,6 +4,7 @@ import { formatBalance, formatUSD } from '@/utils/format';
 import { type AggregatedBalance } from '@/hooks/useMultiChainBalances';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatTokenSymbol } from '@/config/tokens';
+import { useSettings } from '@/providers/SettingsContext';
 import s from './Portfolio.module.scss';
 import Image from 'next/image';
 
@@ -13,6 +14,8 @@ interface TokenBreakdownProps {
 }
 
 export function TokenBreakdown({ balances, isLoading }: TokenBreakdownProps) {
+  const { hideSmallBalances, threshold } = useSettings();
+
   if (isLoading) {
     return (
       <div className={s.tokenList}>
@@ -43,7 +46,7 @@ export function TokenBreakdown({ balances, isLoading }: TokenBreakdownProps) {
     <div className={s.tokenList}>
       {balances.map((balance) => {
         if (!balance.totalBalance) return null;
-        if (balance.usdValue < 0.01) return null; // todo: make this configurable
+        if (hideSmallBalances && balance.usdValue < threshold) return null;
 
         const displaySymbol = formatTokenSymbol[balance.symbol] || balance.symbol;
         return (

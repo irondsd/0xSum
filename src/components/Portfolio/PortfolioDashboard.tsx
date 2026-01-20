@@ -9,6 +9,8 @@ import { TokenBreakdown } from './TokenBreakdown';
 import { AccountCard } from './AccountCard';
 import { AddSubAccount } from './AddSubAccount';
 import { Spinner } from '@/components/ui/spinner';
+import { Switch } from '@/components/ui/switch';
+import { useSettings } from '@/providers/SettingsContext';
 import s from './Portfolio.module.scss';
 
 interface PortfolioDashboardProps {
@@ -17,6 +19,7 @@ interface PortfolioDashboardProps {
 
 export function PortfolioDashboard({ mainAddress }: PortfolioDashboardProps) {
   const { subAccounts, isLoaded, addSubAccount, removeSubAccount } = useSubAccounts(mainAddress);
+  const { hideSmallBalances, toggleHideSmallBalances } = useSettings();
 
   // Combine all addresses into a single array for the multi-account hook
   const allAddresses = useMemo(() => {
@@ -60,6 +63,11 @@ export function PortfolioDashboard({ mainAddress }: PortfolioDashboardProps) {
   return (
     <div className={s.dashboard}>
       <TotalBalance totalUsd={totalUsd} isLoading={isLoading} />
+
+      <div className="mb-6 flex items-center justify-end gap-2">
+        <span className="text-sm font-medium text-muted-foreground">Hide small balances</span>
+        <Switch checked={hideSmallBalances} onCheckedChange={toggleHideSmallBalances} />
+      </div>
 
       <section className={s.section}>
         <h2 className={s.sectionTitle}>Token Breakdown</h2>

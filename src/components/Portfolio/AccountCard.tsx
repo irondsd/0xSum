@@ -9,6 +9,7 @@ import { chainNames, type SupportedChain } from '@/config/chains';
 import { formatTokenSymbol } from '@/config/tokens';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useSettings } from '@/providers/SettingsContext';
 import s from './Portfolio.module.scss';
 
 interface AccountCardProps {
@@ -55,8 +56,16 @@ export function AccountCard({
     [onRemove],
   );
 
+  const { hideSmallBalances, threshold } = useSettings();
+
+  // Filter balances for display
+  const displayBalances = balances.filter((b) => {
+    if (!hideSmallBalances) return true;
+    return b.usdValue >= threshold;
+  });
+
   // Group balances by chain
-  const balancesByChain = balances.reduce(
+  const balancesByChain = displayBalances.reduce(
     (acc, balance) => {
       const chainId = balance.chainId;
       if (!acc[chainId]) acc[chainId] = [];

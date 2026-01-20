@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { Web3Provider } from '@/providers/Web3Provider';
 import { ThemeProvider } from '@/providers/ThemeProvider';
+import { SettingsProvider } from '@/providers/SettingsContext';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import '@rainbow-me/rainbowkit/styles.css';
@@ -24,13 +25,15 @@ export default function RootLayout({
     <html lang="en" className={inter.variable} suppressHydrationWarning>
       <body>
         <ThemeProvider>
-          <Web3Provider>
-            <div className={s.layout}>
-              <Header />
-              <main className={s.main}>{children}</main>
-              <Footer />
-            </div>
-          </Web3Provider>
+          <SettingsProvider>
+            <Web3Provider>
+              <div className={s.layout}>
+                <Header />
+                <main className={s.main}>{children}</main>
+                <Footer />
+              </div>
+            </Web3Provider>
+          </SettingsProvider>
         </ThemeProvider>
       </body>
     </html>
