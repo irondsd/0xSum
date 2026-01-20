@@ -64,7 +64,7 @@ export function PortfolioDashboard({ mainAddress }: PortfolioDashboardProps) {
     <div className={s.dashboard}>
       <TotalBalance totalUsd={totalUsd} isLoading={isLoading} />
 
-      <div className="mb-6 flex items-center justify-end gap-2">
+      <div className="mb-6 flex items-center justify-end gap-2 cursor-pointer" onClick={toggleHideSmallBalances}>
         <span className="text-sm font-medium text-muted-foreground">Hide small balances</span>
         <Switch checked={hideSmallBalances} onCheckedChange={toggleHideSmallBalances} />
       </div>
