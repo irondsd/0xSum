@@ -3,7 +3,8 @@
 import { useMemo } from 'react';
 import { type Address } from 'viem';
 import { useSubAccounts } from '@/hooks/useSubAccounts';
-import { useMultiAccountBalances, aggregateBalances, type AccountBalances } from '@/hooks/useMultiChainBalances';
+import { useMultiAccountBalances } from '@/hooks/useMultiChainBalances';
+import { aggregateBalances, type AccountBalances } from '@/utils/balanceUtils';
 import { TotalBalance } from './TotalBalance';
 import { TokenBreakdown } from './TokenBreakdown';
 import { AccountCard } from './AccountCard';

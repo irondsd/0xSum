@@ -2,68 +2,17 @@
 
 import { useMemo } from 'react';
 import { type Address } from 'viem';
-import { useQuery, useQueries } from '@tanstack/react-query';
-import { getBalance } from 'wagmi/actions';
 import { useReadContracts, useConfig } from 'wagmi';
+import { getBalance } from 'wagmi/actions';
 import { supportedChains, NATIVE_TOKENS } from '@/config/chains';
 import { TOKEN_ADDRESSES, ERC20_ABI, getTokenName, TOKEN_NAMES } from '@/config/tokens';
+import { TOKEN_PRICING_STRATEGIES } from '@/config/pricing';
 
 import { normalizeTokenSymbol } from '@/utils/normalizeTokenSymbol';
-import { useTokenPrices } from './useTokenPrices';
-
-export interface TokenBalance {
-  symbol: string;
-  name: string;
-  decimals: number;
-  chainId: number;
-  address: Address | null; // null for native token
-  balance: bigint;
-  usdValue: number;
-}
-
-export interface AccountBalances {
-  address: Address;
-  balances: TokenBalance[];
-  totalUsd: number;
-  isLoading: boolean;
-  isError: boolean;
-}
-
-/**
- * Aggregate balances by token symbol across all accounts
- */
-export interface AggregatedBalance {
-  symbol: string;
-  name: string;
-  totalBalance: bigint;
-  decimals: number;
-  usdValue: number;
-}
-
-export function aggregateBalances(accountBalances: (AccountBalances | null)[]): AggregatedBalance[] {
-  const aggregated: Record<string, AggregatedBalance> = {};
-
-  accountBalances.forEach((account) => {
-    if (!account) return;
-
-    account.balances.forEach((balance) => {
-      if (!aggregated[balance.symbol]) {
-        aggregated[balance.symbol] = {
-          symbol: balance.symbol,
-          name: balance.name,
-          totalBalance: BigInt(0),
-          decimals: balance.decimals,
-          usdValue: 0,
-        };
-      }
-
-      aggregated[balance.symbol].totalBalance += balance.balance;
-      aggregated[balance.symbol].usdValue += balance.usdValue;
-    });
-  });
-
-  return Object.values(aggregated).sort((a, b) => b.usdValue - a.usdValue);
-}
+import { useApiTokenPrices } from './useApiTokenPrices';
+import { useProtocolPrices, ProtocolToken } from './useProtocolPrices';
+import { AccountBalances } from '@/utils/balanceUtils';
+import { useQueries } from '@tanstack/react-query';
 
 /**
  * Hook to fetch balances for multiple addresses at once
@@ -74,7 +23,7 @@ export function useMultiAccountBalances(addresses: Address[]): {
   isLoading: boolean;
   isError: boolean;
 } {
-  // Build all queries for all addresses
+  // Build all queries for all addresses for ERC20s
   const allErc20Queries = useMemo(() => {
     const queries: {
       address: Address;
@@ -143,23 +92,79 @@ export function useMultiAccountBalances(addresses: Address[]): {
     },
   });
 
-  // Token prices
-  const { data: prices } = useTokenPrices();
+  // --- Derive Tokens and Fetch Prices ---
 
-  // Fetch all native balances using useBalances pattern
-  // We need to use individual useBalance calls but batched via useReadContracts is not possible for native
-  // So we use wagmi's multicall approach with eth_getBalance
+  const { uniqueApiSymbols, distinctProtocolTokens } = useMemo(() => {
+    const apiSyms = new Set<string>();
+    const protoTokens: ProtocolToken[] = [];
+    const processedProtoTokens = new Set<string>(); // avoid duplicates
 
-  // For native balances, we'll use a different approach - fetch via getBalance
-  // Since we can't easily batch native balance calls, we'll use the standard multicall for ERC20
-  // and accept that native balances need a different approach
+    // 1. Add Native Tokens (always API?)
+    // Native tokens usually use API pricing (ETH, MATIC, etc.)
+    supportedChains.forEach((chain) => {
+      const nativeConfig = NATIVE_TOKENS[chain.id];
+      const symbol = normalizeTokenSymbol(nativeConfig?.symbol || 'ETH');
+      // Check strategy
+      const strategy = TOKEN_PRICING_STRATEGIES[symbol];
+      if (strategy?.type === 'protocol') {
+        // Rare for native, but possible?
+        // Native does not have address, so protocol pricing hook might fail if it expects address.
+        // Assumption: Native tokens are always API priced.
+      }
+      apiSyms.add(symbol);
+    });
+
+    // 2. Add ERC20 Tokens from data
+    if (erc20Data) {
+      let dataIndex = 0;
+      addresses.forEach(() => {
+        supportedChains.forEach((chain) => {
+          const tokens = TOKEN_ADDRESSES[chain.id] || [];
+          tokens.forEach((tokenAddress) => {
+            // we skip balance result
+            const symbolResult = erc20Data[dataIndex + 1];
+            const decimalsResult = erc20Data[dataIndex + 2];
+            dataIndex += 3;
+
+            if (symbolResult?.status === 'success' && decimalsResult?.status === 'success') {
+              const symbol = normalizeTokenSymbol(symbolResult.result as string);
+              const decimals = Number(decimalsResult.result);
+
+              const strategy = TOKEN_PRICING_STRATEGIES[symbol];
+
+              if (strategy?.type === 'protocol') {
+                const key = `${symbol}-${chain.id}`;
+                if (!processedProtoTokens.has(key)) {
+                  protoTokens.push({
+                    symbol,
+                    address: tokenAddress,
+                    chainId: chain.id,
+                    decimals,
+                  });
+                  processedProtoTokens.add(key);
+                }
+              } else {
+                apiSyms.add(symbol);
+              }
+            }
+          });
+        });
+      });
+    }
+
+    return {
+      uniqueApiSymbols: Array.from(apiSyms),
+      distinctProtocolTokens: protoTokens,
+    };
+  }, [erc20Data, addresses]);
+
+  // Fetch Prices
+  const { data: apiPrices } = useApiTokenPrices(uniqueApiSymbols);
+  const protocolPrices = useProtocolPrices(distinctProtocolTokens);
 
   // Process results
   const result = useMemo(() => {
     const balancesByAddress = new Map<Address, AccountBalances>();
-    // TODO: Handle native balance loading state properly
-    const isLoading = erc20Loading;
-    const isError = erc20Error;
 
     // Initialize all addresses
     addresses.forEach((addr) => {
@@ -195,7 +200,18 @@ export function useMultiAccountBalances(addresses: Address[]): {
               const balance = BigInt(balanceResult.result as string);
               const symbol = normalizeTokenSymbol(symbolResult.result as string);
               const decimals = Number(decimalsResult.result);
-              const price = prices?.[symbol] || 0;
+
+              // Get price
+              let price = 0;
+              const strategy = TOKEN_PRICING_STRATEGIES[symbol];
+
+              if (strategy?.type === 'protocol') {
+                // Try protocol price specific to chain
+                const key = `${symbol}-${chain.id}`;
+                price = protocolPrices?.[key] || 0;
+              } else {
+                price = apiPrices?.[symbol] || 0;
+              }
 
               accountData.balances.push({
                 symbol,
@@ -220,7 +236,9 @@ export function useMultiAccountBalances(addresses: Address[]): {
             const balance = nativeBalance.data.value;
             const decimals = nativeConfig?.decimals || 18;
             const symbol = normalizeTokenSymbol(nativeConfig?.symbol || 'ETH');
-            const price = prices?.[symbol] || 0;
+
+            // Native is always API priced currently
+            const price = apiPrices?.[symbol] || 0;
 
             accountData.balances.push({
               symbol,
@@ -240,8 +258,8 @@ export function useMultiAccountBalances(addresses: Address[]): {
       });
     }
 
-    return { balancesByAddress, isLoading, isError };
-  }, [addresses, erc20Data, erc20Loading, erc20Error, prices, nativeBalanceQueries]);
+    return { balancesByAddress, isLoading: erc20Loading, isError: erc20Error };
+  }, [addresses, erc20Data, erc20Loading, erc20Error, nativeBalanceQueries, apiPrices, protocolPrices]);
 
   return result;
 }
