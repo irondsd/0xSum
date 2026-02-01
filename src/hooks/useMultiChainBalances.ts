@@ -9,6 +9,7 @@ import { supportedChains, NATIVE_TOKENS } from '@/config/chains';
 import { TOKEN_ADDRESSES, ERC20_ABI, getTokenName, TOKEN_NAMES } from '@/config/tokens';
 
 import { normalizeTokenSymbol } from '@/utils/normalizeTokenSymbol';
+import { useTokenPrices } from './useTokenPrices';
 
 export interface TokenBalance {
   symbol: string;
@@ -26,23 +27,6 @@ export interface AccountBalances {
   totalUsd: number;
   isLoading: boolean;
   isError: boolean;
-}
-
-const fetchTokenPrices = async (symbols: string[]) => {
-  if (!symbols.length) return {};
-  const query = symbols.join(',');
-  const res = await fetch(`/api/tokenPrices?symbols=${query}`);
-  if (!res.ok) throw new Error('Failed to fetch prices');
-  return res.json() as Promise<Record<string, number>>;
-};
-
-export function useTokenPrices(symbols: string[] = Object.keys(TOKEN_NAMES)) {
-  return useQuery({
-    queryKey: ['tokenPrices', symbols],
-    queryFn: () => fetchTokenPrices(symbols),
-    // Refresh every minute
-    refetchInterval: 60000,
-  });
 }
 
 /**
