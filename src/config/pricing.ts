@@ -2,14 +2,14 @@ export type PricingStrategy = 'api' | 'protocol';
 
 export type ProtocolType = 'yearn';
 
-export interface ProtocolPricingConfig {
+export type ProtocolPricingConfig = {
   type: 'protocol';
   protocol: ProtocolType;
-}
+};
 
-export interface ApiPricingConfig {
+export type ApiPricingConfig = {
   type: 'api';
-}
+};
 
 export type TokenPricingConfig = ProtocolPricingConfig | ApiPricingConfig;
 

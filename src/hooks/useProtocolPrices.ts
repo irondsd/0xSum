@@ -30,27 +30,28 @@ export function useProtocolPrices(tokens: ProtocolToken[]) {
 
   // 2. Build contract reads
   const { data: reads } = useReadContracts({
-    contracts: protocolTokens.map((token) => {
-      const normalizedSymbol = normalizeTokenSymbol(token.symbol);
-      const strategy = TOKEN_PRICING_STRATEGIES[normalizedSymbol] as ProtocolPricingConfig;
-      
-      const module = PROTOCOL_MODULES[strategy.protocol];
-      if (module) {
-        return module.getContractConfig(token);
-      }
-      return null;
-    }).filter(Boolean) as any[],
+    contracts: protocolTokens
+      .map((token) => {
+        const normalizedSymbol = normalizeTokenSymbol(token.symbol);
+        const strategy = TOKEN_PRICING_STRATEGIES[normalizedSymbol] as ProtocolPricingConfig;
+
+        const module = PROTOCOL_MODULES[strategy.protocol];
+        if (module) {
+          return module.getContractConfig(token);
+        }
+        return null;
+      })
+      .filter(Boolean) as any[],
     query: {
       enabled: protocolTokens.length > 0,
-      // Refresh every minute
-      refetchInterval: 60000,
+      refetchInterval: 60 * 10000, // 10 minutes
     },
   });
 
   // 3. Process results into a map: `${symbol}-${chainId}` -> price
   return useMemo(() => {
     const prices: Record<string, number> = {};
-    
+
     if (!reads) return prices;
 
     protocolTokens.forEach((token, index) => {
@@ -61,9 +62,9 @@ export function useProtocolPrices(tokens: ProtocolToken[]) {
         const module = PROTOCOL_MODULES[strategy.protocol];
 
         if (module && module.formatPrice) {
-           const price = module.formatPrice(result.result, token);
-           const key = `${normalizedSymbol}-${token.chainId}`;
-           prices[key] = price;
+          const price = module.formatPrice(result.result, token);
+          const key = `${normalizedSymbol}-${token.chainId}`;
+          prices[key] = price;
         }
       }
     });

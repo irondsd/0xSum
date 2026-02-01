@@ -6,8 +6,7 @@ export function useApiTokenPrices(symbols: string[] = Object.keys(TOKEN_NAMES)) 
   return useQuery({
     queryKey: ['tokenPrices', symbols],
     queryFn: () => fetchTokenPrices(symbols),
-    // Refresh every minute
-    refetchInterval: 60000,
+    refetchInterval: 60 * 1000, // Refresh every minute
     enabled: symbols.length > 0,
   });
 }

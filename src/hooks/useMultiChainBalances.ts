@@ -2,15 +2,16 @@
 
 import { useMemo } from 'react';
 import { type Address } from 'viem';
-import { useReadContracts, useConfig } from 'wagmi';
+import { useConfig } from 'wagmi';
 import { getBalance } from 'wagmi/actions';
 import { supportedChains, NATIVE_TOKENS } from '@/config/chains';
-import { TOKEN_ADDRESSES, ERC20_ABI, getTokenName, TOKEN_NAMES } from '@/config/tokens';
+import { getTokenName, TOKEN_ADDRESSES } from '@/config/tokens';
 import { TOKEN_PRICING_STRATEGIES } from '@/config/pricing';
 
 import { normalizeTokenSymbol } from '@/utils/normalizeTokenSymbol';
 import { useApiTokenPrices } from './useApiTokenPrices';
 import { useProtocolPrices, ProtocolToken } from './useProtocolPrices';
+import { useErc20Queries } from './useErc20Queries';
 import { AccountBalances } from '@/utils/balanceUtils';
 import { useQueries } from '@tanstack/react-query';
 
@@ -23,51 +24,10 @@ export function useMultiAccountBalances(addresses: Address[]): {
   isLoading: boolean;
   isError: boolean;
 } {
-  // Build all queries for all addresses for ERC20s
-  const allErc20Queries = useMemo(() => {
-    const queries: {
-      address: Address;
-      abi: typeof ERC20_ABI;
-      functionName: 'balanceOf' | 'symbol' | 'decimals';
-      args?: readonly [Address];
-      chainId: number;
-      ownerAddress: Address; // Track which address this query is for
-    }[] = [];
-
-    addresses.forEach((ownerAddress) => {
-      supportedChains.forEach((chain) => {
-        const tokens = TOKEN_ADDRESSES[chain.id] || [];
-        tokens.forEach((tokenAddress) => {
-          queries.push({
-            address: tokenAddress,
-            abi: ERC20_ABI,
-            functionName: 'balanceOf',
-            args: [ownerAddress] as const,
-            chainId: chain.id,
-            ownerAddress,
-          });
-          queries.push({
-            address: tokenAddress,
-            abi: ERC20_ABI,
-            functionName: 'symbol',
-            chainId: chain.id,
-            ownerAddress,
-          });
-          queries.push({
-            address: tokenAddress,
-            abi: ERC20_ABI,
-            functionName: 'decimals',
-            chainId: chain.id,
-            ownerAddress,
-          });
-        });
-      });
-    });
-
-    return queries;
-  }, [addresses]);
-
   const config = useConfig();
+
+  // Get ERC20 queries and data
+  const { erc20Data, erc20Loading, erc20Error } = useErc20Queries(addresses);
 
   // Native balance queries for all addresses
   const nativeBalanceQueries = useQueries({
@@ -75,21 +35,9 @@ export function useMultiAccountBalances(addresses: Address[]): {
       supportedChains.map((chain) => ({
         queryKey: ['balance', 'native', addr, chain.id],
         queryFn: () => getBalance(config, { address: addr, chainId: chain.id }),
-        staleTime: 1_000 * 30, // 30 seconds
+        staleTime: 1_000 * 60, // 30 seconds
       })),
     ),
-  });
-
-  // Fetch all ERC20 balances in one call
-  const {
-    data: erc20Data,
-    isLoading: erc20Loading,
-    isError: erc20Error,
-  } = useReadContracts({
-    contracts: allErc20Queries.map(({ ...query }) => query),
-    query: {
-      enabled: addresses.length > 0 && allErc20Queries.length > 0,
-    },
   });
 
   // --- Derive Tokens and Fetch Prices ---
