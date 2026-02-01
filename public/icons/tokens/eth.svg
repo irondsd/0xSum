@@ -1,11 +1,9 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" id="Layer_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 500 500" enable-background="new 0 0 500 500" xml:space="preserve">
-<polygon fill="#2F3030" points="249.982,6.554 397.98,251.112 250.53,188.092 "/>
-<polygon fill="#828384" points="102.39,251.112 249.982,6.554 250.53,188.092 "/>
-<polygon fill="#343535" points="249.982,341.285 102.39,251.112 250.53,188.092 "/>
-<polygon fill="#131313" points="397.98,251.112 250.53,188.092 249.982,341.285 "/>
-<polygon fill="#2F3030" points="249.982,372.329 397.98,284.597 249.982,493.13 "/>
-<polygon fill="#828384" points="249.982,372.329 102.39,284.597 249.982,493.13 "/>
+<svg width="1000" height="1000" viewBox="0 0 1000 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="500" cy="500" r="500" fill="#627EEA"/>
+<path d="M499.974 149.438L713.091 501.601L500.763 410.852L499.974 149.438Z" fill="#C0CCF7"/>
+<path d="M287.441 501.601L499.974 149.438L500.763 410.852L287.441 501.601Z" fill="white"/>
+<path d="M499.974 631.45L287.441 501.601L500.763 410.853L499.974 631.45Z" fill="#C0CCF7"/>
+<path d="M713.091 501.601L500.763 410.853L499.974 631.45L713.091 501.601Z" fill="#8198EE"/>
+<path d="M499.974 676.154L713.091 549.82L499.974 850.107V676.154Z" fill="#C0CCF7"/>
+<path d="M499.974 676.154L287.441 549.82L499.974 850.107V676.154Z" fill="white"/>
 </svg>

@@ -1,18 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Generator: Adobe Illustrator 24.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" id="DAI" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 500 500" style="enable-background:new 0 0 500 500;" xml:space="preserve">
-<style type="text/css">
-	.st0{fill:url(#SVGID_1_);}
-	.st1{fill:#FFFFFF;}
-</style>
-<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="73.2233" y1="73.2233" x2="426.7767" y2="426.7767">
-	<stop  offset="0" style="stop-color:#F9AF1A"/>
-	<stop  offset="1" style="stop-color:#FBC349"/>
+<svg width="1000" height="1000" viewBox="0 0 1000 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_1_62)">
+<path d="M500 1000C776.142 1000 1000 776.142 1000 500C1000 223.858 776.142 0 500 0C223.858 0 0 223.858 0 500C0 776.142 223.858 1000 500 1000Z" fill="url(#paint0_linear_1_62)"/>
+<path d="M797.4 418.4H738C704.8 328.4 618.4 264.2 516.8 264.2H310.6V418.4H245V472.4H310.6V530.2H245V584.2H310.6V735.8H516.8C617.4 735.8 703.2 672.8 737 584.2H797.4V530.2H750.6C751.8 520.4 752.6 510.2 752.6 500C752.6 490.6 752 481.4 751 472.4H797.6V418.4H797.4ZM364.6 315.8H514.6C586.4 315.8 648.2 357.8 677.2 418.4H364.6V315.8ZM514.6 684.2H364.6V584.2H676C646.6 643.4 585.4 684.2 514.6 684.2ZM694.8 496V504.2C694.8 513 694.2 521.8 693 530.2H364.6V472.4H693.2C694.2 480.2 694.8 488 694.8 496Z" fill="white"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_1_62" x1="146.447" y1="146.447" x2="853.553" y2="853.553" gradientUnits="userSpaceOnUse">
+<stop stop-color="#F9AF1A"/>
+<stop offset="1" stop-color="#FBC349"/>
 </linearGradient>
-<circle class="st0" cx="250" cy="250" r="250"/>
-<path class="st1" d="M398.7,209.2H369c-16.6-45-59.8-77.1-110.6-77.1H155.3v77.1h-32.8v27h32.8v28.9h-32.8v27h32.8v75.8h103.1
-	c50.3,0,93.2-31.5,110.1-75.8h30.2v-27h-23.4c0.6-4.9,1-10,1-15.1v0c0-4.7-0.3-9.3-0.8-13.8h23.3V209.2z M182.3,157.9h75
-	c35.9,0,66.8,21,81.3,51.3H182.3V157.9z M257.3,342.1h-75v-50H338C323.3,321.7,292.7,342.1,257.3,342.1z M347.4,248v4.1
-	c0,4.4-0.3,8.8-0.9,13H182.3v-28.9h164.3C347.1,240.1,347.4,244,347.4,248z"/>
+<clipPath id="clip0_1_62">
+<rect width="1000" height="1000" fill="white"/>
+</clipPath>
+</defs>
 </svg>

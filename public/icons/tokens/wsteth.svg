@@ -1,22 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Generator: Adobe Illustrator 27.7.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 500 500" style="enable-background:new 0 0 500 500;" xml:space="preserve">
-<style type="text/css">
-	.st0{fill:#00A3FF;}
-	.st1{fill:#FFFFFF;}
-	.st2{opacity:0.6;fill:#FFFFFF;enable-background:new    ;}
-	.st3{opacity:0.2;fill:#FFFFFF;enable-background:new    ;}
-</style>
-<rect y="0" class="st0" width="500" height="500"/>
-<path class="st1" d="M147.4,232.3l-2.8,4.3c-31.6,48.4-24.5,111.8,17,152.5c24.4,23.9,56.4,35.9,88.3,35.9
-	C249.9,424.9,249.9,424.9,147.4,232.3z"/>
-<path class="st2" d="M249.9,290.8l-102.5-58.5c102.5,192.6,102.5,192.6,102.5,192.6C249.9,382.9,249.9,334.9,249.9,290.8z"/>
-<path class="st2" d="M352.6,232.3l2.8,4.3c31.6,48.4,24.5,111.8-17,152.5c-24.4,23.9-56.4,35.9-88.3,35.9
-	C250.1,424.9,250.1,424.9,352.6,232.3z"/>
-<path class="st3" d="M250,290.8l102.5-58.5C250,424.9,250,424.9,250,424.9C250,382.9,250,334.9,250,290.8z"/>
-<path class="st3" d="M250.1,160v101l88.3-50.5L250.1,160z"/>
-<path class="st2" d="M250.1,160l-88.4,50.5l88.4,50.5V160z"/>
-<path class="st1" d="M250.1,75.1l-88.4,135.5l88.4-50.7V75.1z"/>
-<path class="st2" d="M250.1,159.9l88.4,50.7L250.1,75V159.9z"/>
+<svg width="1000" height="1000" viewBox="0 0 1000 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_1_11)">
+<path d="M1000 0H0V1000H1000V0Z" fill="#00A3FF"/>
+<path d="M294.8 464.6L289.2 473.2C226 570 240.2 696.8 323.2 778.2C372 826 436 850 499.8 850C499.8 849.8 499.8 849.8 294.8 464.6Z" fill="white"/>
+<path opacity="0.6" d="M499.8 581.6L294.8 464.6C499.8 849.8 499.8 849.8 499.8 849.8C499.8 765.8 499.8 669.8 499.8 581.6Z" fill="white"/>
+<path opacity="0.6" d="M705.2 464.6L710.8 473.2C774 570 759.8 696.8 676.8 778.2C628 826 564 850 500.2 850C500.2 849.8 500.2 849.8 705.2 464.6Z" fill="white"/>
+<path opacity="0.2" d="M500 581.6L705 464.6C500 849.8 500 849.8 500 849.8C500 765.8 500 669.8 500 581.6Z" fill="white"/>
+<path opacity="0.2" d="M500.2 320V522L676.8 421L500.2 320Z" fill="white"/>
+<path opacity="0.6" d="M500.2 320L323.4 421L500.2 522V320Z" fill="white"/>
+<path d="M500.2 150.2L323.4 421.2L500.2 319.8V150.2Z" fill="white"/>
+<path opacity="0.6" d="M500.2 319.8L677 421.2L500.2 150V319.8Z" fill="white"/>
+</g>
+<defs>
+<clipPath id="clip0_1_11">
+<rect width="1000" height="1000" rx="500" fill="white"/>
+</clipPath>
+</defs>
 </svg>
