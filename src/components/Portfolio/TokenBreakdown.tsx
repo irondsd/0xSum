@@ -1,12 +1,12 @@
 'use client';
 
 import { formatBalance, formatUSD } from '@/utils/format';
-import { type AggregatedBalance } from '@/hooks/useMultiChainBalances';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatTokenSymbol } from '@/config/tokens';
 import { useSettings } from '@/providers/SettingsContext';
 import s from './Portfolio.module.scss';
 import Image from 'next/image';
+import { AggregatedBalance } from '@/utils/balanceUtils';
 
 interface TokenBreakdownProps {
   balances: AggregatedBalance[];

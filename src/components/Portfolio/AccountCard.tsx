@@ -4,13 +4,13 @@ import { useState, useCallback } from 'react';
 import { type Address } from 'viem';
 import { ChevronDown, ChevronUp, Copy, Check, Trash2, User } from 'lucide-react';
 import { shortenAddress, formatBalance, formatUSD } from '@/utils/format';
-import { type TokenBalance } from '@/hooks/useMultiChainBalances';
 import { chainNames, type SupportedChain } from '@/config/chains';
 import { formatTokenSymbol } from '@/config/tokens';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useSettings } from '@/providers/SettingsContext';
 import s from './Portfolio.module.scss';
+import { TokenBalance } from '@/utils/balanceUtils';
 
 interface AccountCardProps {
   address: Address;
