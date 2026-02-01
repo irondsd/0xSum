@@ -34,6 +34,7 @@ export const TOKEN_ADDRESSES: Record<number, Address[]> = {
     '0xae7ab96520de3a18e5e111b5eaab095312d7fe84', // stETH
     '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599', // WBTC
     '0x68749665FF8D2d112Fa859AA293F07A622782F38', // XAUt
+    '0x310B7Ea7475A0B449Cfd73bE81522F1B88eFAFaa', // Yearn USDT-1 yVault (yvUSDT-1)
   ],
   42161: [
     USDC_ADDRESSES[42161],
@@ -57,6 +58,7 @@ export const TOKEN_NAMES: Record<string, string> = {
   avax: 'Avalanche',
   bnb: 'Binance Coin',
   pol: 'Polygon',
+  'yvusdt-1': 'Yearn USDT-1 yVault',
 };
 
 export const formatTokenSymbol: Record<string, string> = {
@@ -72,6 +74,7 @@ export const formatTokenSymbol: Record<string, string> = {
   avax: 'AVAX',
   bnb: 'BNB',
   pol: 'Polygon',
+  'yvusdt-1': 'yvUSDT-1',
 };
 
 // Helper to get token name from symbol
