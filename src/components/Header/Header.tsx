@@ -2,6 +2,7 @@
 
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { ThemeToggle } from './ThemeToggle';
+import { OfflineIndicator } from './OfflineIndicator';
 import s from './Header.module.scss';
 import { InlineSvg } from '@irondsd/inline-svg';
 
@@ -12,6 +13,7 @@ export function Header() {
         <InlineSvg src="/images/logo.svg" className={s.logoIcon} />
         <span className={s.logoText}>0xSum</span>
       </div>
+      <OfflineIndicator />
       <div className={s.actions}>
         <ThemeToggle />
         <ConnectButton
@@ -29,3 +31,4 @@ export function Header() {
     </header>
   );
 }
+

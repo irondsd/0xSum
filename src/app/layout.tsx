@@ -3,7 +3,7 @@ import { Inter } from 'next/font/google';
 import { Web3Provider } from '@/providers/Web3Provider';
 import { ThemeProvider } from '@/providers/ThemeProvider';
 import { SettingsProvider } from '@/providers/SettingsContext';
-import { Header } from '@/components/Header';
+import { Header } from '@/components/Header/Header';
 import { Footer } from '@/components/Footer';
 import '@rainbow-me/rainbowkit/styles.css';
 import './globals.css';
