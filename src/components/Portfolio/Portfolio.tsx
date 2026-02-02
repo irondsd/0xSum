@@ -8,9 +8,5 @@ import s from './Portfolio.module.scss';
 export function Portfolio() {
   const { isConnected, address } = useAccount();
 
-  return (
-    <div className={s.container}>
-      {isConnected && address ? <PortfolioDashboard mainAddress={address} /> : <NotConnected />}
-    </div>
-  );
+  return <div className={s.container}>{isConnected && address ? <PortfolioDashboard /> : <NotConnected />}</div>;
 }
