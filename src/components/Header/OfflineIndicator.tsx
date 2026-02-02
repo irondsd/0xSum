@@ -23,7 +23,7 @@ export function OfflineIndicator() {
     };
   }, []);
 
-  // if (!isOffline) return null;
+  if (!isOffline) return null;
 
   return (
     <Tooltip>
