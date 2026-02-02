@@ -12,8 +12,8 @@ import s from './layout.module.scss';
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
-  title: '0xSum - Multi-Wallet Portfolio Tracker',
-  description: 'Track your crypto portfolio across multiple wallets and chains',
+  title: '0x∑ - 0xSum',
+  description: '0x∑ - Track your crypto portfolio across multiple wallets and chains',
 };
 
 export default function RootLayout({
