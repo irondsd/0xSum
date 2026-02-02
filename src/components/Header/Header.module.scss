@@ -15,6 +15,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  cursor: pointer;
 }
 
 .logoIcon {
@@ -31,6 +32,7 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   letter-spacing: -0.02em;
+  pointer-events: none;
 }
 
 .actions {

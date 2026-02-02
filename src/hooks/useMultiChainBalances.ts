@@ -23,11 +23,17 @@ export function useMultiAccountBalances(addresses: Address[]): {
   balancesByAddress: Map<Address, AccountBalances>;
   isLoading: boolean;
   isError: boolean;
+  refetch: () => void;
 } {
   const config = useConfig();
 
   // Get ERC20 queries and data
-  const { erc20Data, erc20Loading, erc20Error } = useErc20Queries(addresses);
+  const {
+    data: erc20Data,
+    isLoading: erc20Loading,
+    isError: erc20Error,
+    refetch: refetchErc20,
+  } = useErc20Queries(addresses);
 
   // Native balance queries for all addresses
   const nativeBalanceQueries = useQueries({
@@ -107,8 +113,8 @@ export function useMultiAccountBalances(addresses: Address[]): {
   }, [erc20Data, addresses]);
 
   // Fetch Prices
-  const { data: apiPrices } = useApiTokenPrices(uniqueApiSymbols);
-  const protocolPrices = useProtocolPrices(distinctProtocolTokens);
+  const { data: apiPrices, refetch: refetchApiPrices } = useApiTokenPrices(uniqueApiSymbols);
+  const { prices: protocolPrices, refetch: refetchProtocolPrices } = useProtocolPrices(distinctProtocolTokens);
 
   // Process results
   const result = useMemo(() => {
@@ -209,5 +215,12 @@ export function useMultiAccountBalances(addresses: Address[]): {
     return { balancesByAddress, isLoading: erc20Loading, isError: erc20Error };
   }, [addresses, erc20Data, erc20Loading, erc20Error, nativeBalanceQueries, apiPrices, protocolPrices]);
 
-  return result;
+  const refetch = () => {
+    nativeBalanceQueries.forEach((q) => q.refetch());
+    refetchErc20();
+    refetchApiPrices();
+    refetchProtocolPrices();
+  };
+
+  return { ...result, refetch };
 }

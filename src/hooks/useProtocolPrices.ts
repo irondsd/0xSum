@@ -1,11 +1,13 @@
 import { useMemo } from 'react';
 import { Address } from 'viem';
-import { useReadContracts } from 'wagmi';
+import { useConfig } from 'wagmi';
+import { useQuery } from '@tanstack/react-query';
 import { TOKEN_PRICING_STRATEGIES, ProtocolPricingConfig } from '@/config/pricing';
 import { normalizeTokenSymbol } from '@/utils/normalizeTokenSymbol';
 
 // Import protocol pricing modules
 import * as yearnPricing from '@/protocols/yearn/pricing';
+import { readContracts } from 'wagmi/actions';
 
 export interface ProtocolToken {
   symbol: string;
@@ -19,6 +21,8 @@ const PROTOCOL_MODULES: Record<string, any> = {
 };
 
 export function useProtocolPrices(tokens: ProtocolToken[]) {
+  const config = useConfig();
+
   // 1. Filter tokens that need protocol pricing
   const protocolTokens = useMemo(() => {
     return tokens.filter((token) => {
@@ -29,8 +33,8 @@ export function useProtocolPrices(tokens: ProtocolToken[]) {
   }, [tokens]);
 
   // 2. Build contract reads
-  const { data: reads } = useReadContracts({
-    contracts: protocolTokens
+  const contractConfigs = useMemo(() => {
+    return protocolTokens
       .map((token) => {
         const normalizedSymbol = normalizeTokenSymbol(token.symbol);
         const strategy = TOKEN_PRICING_STRATEGIES[normalizedSymbol] as ProtocolPricingConfig;
@@ -41,15 +45,18 @@ export function useProtocolPrices(tokens: ProtocolToken[]) {
         }
         return null;
       })
-      .filter(Boolean) as any[],
-    query: {
-      enabled: protocolTokens.length > 0,
-      refetchInterval: 60 * 10000, // 10 minutes
-    },
+      .filter(Boolean) as any[];
+  }, [protocolTokens]);
+
+  const { data: reads, refetch } = useQuery({
+    queryKey: ['protocolPrices', contractConfigs],
+    queryFn: () => readContracts(config, { contracts: contractConfigs }),
+    enabled: protocolTokens.length > 0,
+    refetchInterval: 60 * 1000, // 1 minute
   });
 
   // 3. Process results into a map: `${symbol}-${chainId}` -> price
-  return useMemo(() => {
+  const prices = useMemo(() => {
     const prices: Record<string, number> = {};
 
     if (!reads) return prices;
@@ -71,4 +78,6 @@ export function useProtocolPrices(tokens: ProtocolToken[]) {
 
     return prices;
   }, [reads, protocolTokens]);
+
+  return { prices, refetch };
 }

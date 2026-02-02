@@ -13,19 +13,13 @@ import { Spinner } from '@/components/ui/spinner';
 import { Switch } from '@/components/ui/switch';
 import { useSettings } from '@/providers/SettingsContext';
 import s from './Portfolio.module.scss';
+import { useAddresses } from '@/hooks/useAddresses';
 
-interface PortfolioDashboardProps {
-  mainAddress: Address;
-}
-
-export function PortfolioDashboard({ mainAddress }: PortfolioDashboardProps) {
-  const { subAccounts, isLoaded, addSubAccount, removeSubAccount } = useSubAccounts(mainAddress);
+export function PortfolioDashboard() {
   const { hideSmallBalances, toggleHideSmallBalances } = useSettings();
 
-  // Combine all addresses into a single array for the multi-account hook
-  const allAddresses = useMemo(() => {
-    return [mainAddress, ...subAccounts];
-  }, [mainAddress, subAccounts]);
+  const { mainAddress, allAddresses } = useAddresses();
+  const { subAccounts, addSubAccount, removeSubAccount, isLoaded } = useSubAccounts(mainAddress);
 
   // Fetch balances for all accounts at once
   const { balancesByAddress, isLoading: balancesLoading, isError } = useMultiAccountBalances(allAddresses);

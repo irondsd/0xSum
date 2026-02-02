@@ -2,15 +2,19 @@
 
 import { useMemo } from 'react';
 import { type Address } from 'viem';
-import { useReadContracts } from 'wagmi';
+import { useConfig } from 'wagmi';
+import { useQuery } from '@tanstack/react-query';
 import { supportedChains } from '@/config/chains';
 import { TOKEN_ADDRESSES, ERC20_ABI } from '@/config/tokens';
+import { readContracts } from 'wagmi/actions';
 
 /**
  * Hook to build and fetch ERC20 balance queries for multiple addresses
  * Returns the contract data along with loading/error states
  */
 export function useErc20Queries(addresses: Address[]) {
+  const config = useConfig();
+
   // Build all queries for all addresses for ERC20s
   const allErc20Queries = useMemo(() => {
     const queries: {
@@ -55,22 +59,12 @@ export function useErc20Queries(addresses: Address[]) {
     return queries;
   }, [addresses]);
 
-  // Fetch all ERC20 balances in one call
-  const {
-    data: erc20Data,
-    isLoading: erc20Loading,
-    isError: erc20Error,
-  } = useReadContracts({
-    contracts: allErc20Queries.map(({ ...query }) => query),
-    query: {
-      enabled: addresses.length > 0 && allErc20Queries.length > 0,
-    },
+  // Fetch all ERC20 balances using useQuery for manual refetch control
+  const query = useQuery({
+    queryKey: ['erc20Balances', addresses],
+    queryFn: () => readContracts(config, { contracts: allErc20Queries }),
+    enabled: addresses.length > 0 && allErc20Queries.length > 0,
   });
 
-  return {
-    allErc20Queries,
-    erc20Data,
-    erc20Loading,
-    erc20Error,
-  };
+  return query;
 }
