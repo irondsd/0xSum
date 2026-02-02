@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import { Web3Provider } from '@/providers/Web3Provider';
 import { ThemeProvider } from '@/providers/ThemeProvider';
@@ -11,9 +11,25 @@ import s from './layout.module.scss';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
+const APP_NAME = '0xSum';
+const APP_DESCRIPTION = 'Track your crypto portfolio across multiple wallets and chains';
+
 export const metadata: Metadata = {
+  applicationName: APP_NAME,
   title: '0x∑ - 0xSum',
-  description: '0x∑ - Track your crypto portfolio across multiple wallets and chains',
+  description: `0x∑ - ${APP_DESCRIPTION}`,
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: APP_NAME,
+  },
+  formatDetection: {
+    telephone: false,
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: '#000000',
 };
 
 export default function RootLayout({
