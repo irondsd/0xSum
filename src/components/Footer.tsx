@@ -1,5 +1,6 @@
 import { Github, Twitter, FileText } from 'lucide-react';
 import s from './Footer.module.scss';
+import { InlineSvg } from '@irondsd/inline-svg';
 
 const links = [
   { icon: Github, href: 'https://github.com', label: 'GitHub' },
@@ -11,6 +12,7 @@ export function Footer() {
   return (
     <footer className={s.footer}>
       <div className={s.logo}>
+        <InlineSvg src="/images/logo.svg" className={s.logoIcon} />
         <span className={s.logoText}>0xSum</span>
       </div>
 

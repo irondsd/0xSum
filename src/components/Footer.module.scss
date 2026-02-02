@@ -12,11 +12,18 @@
 .logo {
   display: flex;
   align-items: center;
+  gap: 4px;
 }
 
 .logoText {
   font-size: 1.25rem;
   font-weight: 600;
+  color: var(--muted-foreground);
+}
+
+.logoIcon {
+  width: 20px;
+  height: 20px;
   color: var(--muted-foreground);
 }
 
