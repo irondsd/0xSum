@@ -18,10 +18,9 @@ export const metadata: Metadata = {
   applicationName: APP_NAME,
   title: '0x∑ - 0xSum',
   description: `0x∑ - ${APP_DESCRIPTION}`,
-  manifest: '/site.webmanifest',
   icons: {
     icon: '/web-app-manifest-192x192.png',
-    apple: '/apple-touch-icon.png',
+    apple: '/web-app-manifest-192x192.png',
   },
   appleWebApp: {
     capable: true,
