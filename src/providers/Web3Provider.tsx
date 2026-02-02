@@ -9,7 +9,7 @@ import { WagmiProvider } from 'wagmi';
 
 import { getQueryClient } from '@/utils/getQueryClient';
 import { config } from '@/config/wagmi';
-import useTheme from 'next-theme';
+import { useTheme } from 'next-themes';
 
 type WagmiProviderProps = {
   children: ReactNode;
