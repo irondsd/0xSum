@@ -10,6 +10,7 @@ A Web3 portfolio tracker that consolidates your crypto holdings across multiple 
 - **DeFi Protocol Integration**: Built-in support for Yearn Finance with an extensible architecture to add more protocols
 - **Offline Support**: Works offline with cached data for reliability
 - **Light/Dark Mode**: Comfortable viewing in any environment
+- **PWA Ready**: Install as a native app on your device for a seamless experience
 
 ## Getting Started
 
