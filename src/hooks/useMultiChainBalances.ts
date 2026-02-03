@@ -120,7 +120,7 @@ export function useMultiAccountBalances(addresses: Address[]): {
       distinctProtocolTokens: protoTokens,
     };
   }, [erc20Data, addresses]);
-  console.log('uniqueApiSymbols:', uniqueApiSymbols);
+
   // Fetch Prices
   const { data: apiPrices, refetch: refetchApiPrices } = useApiTokenPrices(uniqueApiSymbols);
   const { prices: protocolPrices, refetch: refetchProtocolPrices } = useProtocolPrices(distinctProtocolTokens);
