@@ -49,7 +49,7 @@ export function useMultiAccountBalances(addresses: Address[]): {
   // --- Derive Tokens and Fetch Prices ---
 
   const { uniqueApiSymbols, distinctProtocolTokens } = useMemo(() => {
-    const apiSyms = new Set<string>();
+    const apiSymbols = new Set<string>();
     const protoTokens: ProtocolToken[] = [];
     const processedProtoTokens = new Set<string>(); // avoid duplicates
 
@@ -65,7 +65,7 @@ export function useMultiAccountBalances(addresses: Address[]): {
         // Native does not have address, so protocol pricing hook might fail if it expects address.
         // Assumption: Native tokens are always API priced.
       }
-      apiSyms.add(symbol);
+      apiSymbols.add(symbol);
     });
 
     // 2. Add ERC20 Tokens from data
@@ -76,13 +76,20 @@ export function useMultiAccountBalances(addresses: Address[]): {
           const tokens = TOKEN_ADDRESSES[chain.id] || [];
           tokens.forEach((tokenAddress) => {
             // we skip balance result
+            const balanceOfResult = erc20Data[dataIndex];
             const symbolResult = erc20Data[dataIndex + 1];
             const decimalsResult = erc20Data[dataIndex + 2];
+
             dataIndex += 3;
 
-            if (symbolResult?.status === 'success' && decimalsResult?.status === 'success') {
+            if (
+              balanceOfResult.status === 'success' &&
+              symbolResult.status === 'success' &&
+              decimalsResult.status === 'success'
+            ) {
               const symbol = normalizeTokenSymbol(symbolResult.result as string);
               const decimals = Number(decimalsResult.result);
+              const balanceOf = BigInt(balanceOfResult.result);
 
               const strategy = TOKEN_PRICING_STRATEGIES[symbol];
 
@@ -98,7 +105,9 @@ export function useMultiAccountBalances(addresses: Address[]): {
                   processedProtoTokens.add(key);
                 }
               } else {
-                apiSyms.add(symbol);
+                if (balanceOf > 0n) {
+                  apiSymbols.add(symbol);
+                }
               }
             }
           });
@@ -107,11 +116,11 @@ export function useMultiAccountBalances(addresses: Address[]): {
     }
 
     return {
-      uniqueApiSymbols: Array.from(apiSyms),
+      uniqueApiSymbols: Array.from(apiSymbols),
       distinctProtocolTokens: protoTokens,
     };
   }, [erc20Data, addresses]);
-
+  console.log('uniqueApiSymbols:', uniqueApiSymbols);
   // Fetch Prices
   const { data: apiPrices, refetch: refetchApiPrices } = useApiTokenPrices(uniqueApiSymbols);
   const { prices: protocolPrices, refetch: refetchProtocolPrices } = useProtocolPrices(distinctProtocolTokens);
