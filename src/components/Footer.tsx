@@ -3,8 +3,8 @@ import s from './Footer.module.scss';
 import { InlineSvg } from '@irondsd/inline-svg';
 
 const links = [
-  { icon: Github, href: 'https://github.com', label: 'GitHub' },
-  { icon: Twitter, href: 'https://twitter.com', label: 'Twitter' },
+  { icon: Github, href: 'https://github.com/irondsd/0xsum', label: 'GitHub' },
+  { icon: Twitter, href: 'https://twitter.com/irondsd', label: 'Twitter' },
   { icon: FileText, href: '/docs', label: 'Docs' },
 ];
 
@@ -32,7 +32,7 @@ export function Footer() {
         ))}
       </nav>
 
-      <p className={s.copyright}>© {new Date().getFullYear()} 0xSum. All rights reserved.</p>
+      <p className={s.copyright}>© {new Date().getFullYear()} 0xSum. Developed by irondsd.</p>
     </footer>
   );
 }
