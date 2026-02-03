@@ -1,11 +1,12 @@
 'use client';
 
-import { ConnectButton } from '@rainbow-me/rainbowkit';
+// import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { ThemeToggle } from './ThemeToggle';
 import { OfflineIndicator } from './OfflineIndicator';
 import s from './Header.module.scss';
 import { InlineSvg } from '@irondsd/inline-svg';
 import { useUpdate } from '@/hooks/useUpdate';
+import { ConnectButton } from '../ConnectButton/ConnectButton';
 
 export function Header() {
   const { refetchAll } = useUpdate();
@@ -19,17 +20,7 @@ export function Header() {
       <OfflineIndicator />
       <div className={s.actions}>
         <ThemeToggle />
-        <ConnectButton
-          chainStatus="none"
-          accountStatus={{
-            smallScreen: 'avatar',
-            largeScreen: 'full',
-          }}
-          showBalance={{
-            smallScreen: false,
-            largeScreen: true,
-          }}
-        />
+        <ConnectButton />
       </div>
     </header>
   );

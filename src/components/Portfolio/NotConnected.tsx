@@ -20,7 +20,7 @@ export function NotConnected() {
         <ConnectButton.Custom>
           {({ openConnectModal }) => (
             <button onClick={openConnectModal} className={s.connectButton}>
-              Connect Wallet
+              <Wallet size={26} /> Connect Wallet
             </button>
           )}
         </ConnectButton.Custom>
